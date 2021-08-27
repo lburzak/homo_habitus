@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/round_indicator.dart';
 
 void main() {
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
             subtitle1:
                 GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
           )),
-      home: const Scaffold(
+      home: Scaffold(
         body: HabitsPage(),
       ),
     );
@@ -32,10 +33,15 @@ class MyApp extends StatelessWidget {
 }
 
 class HabitsPage extends StatelessWidget {
-  const HabitsPage({Key? key}) : super(key: key);
+  final habitRepository = HabitRepository();
+
+  HabitsPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final habits = habitRepository.getTodayHabits();
+
+    return Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         child: CustomScrollView(
           slivers: [
@@ -54,17 +60,18 @@ class HabitsPage extends StatelessWidget {
                         child: RoundIndicator(
                               height: 78,
                               width: 78,
-                              progressValue: 0.4,
-                              icon: Icons.book,
+                              progressValue: habits[index].goal.progressPercentage,
+                              icon: IconData(habits[index].iconCodePoint, fontFamily: "MaterialIcons"),
                               onPressed: () {},
                             ),
                       ),
-                      childCount: 16),
+                      childCount: habits.length),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 12, mainAxisSpacing: 12)),
             )
           ],
         ),
       );
+  }
 }
 
 class SectionLabel extends StatelessWidget {
