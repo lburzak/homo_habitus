@@ -60,6 +60,7 @@ class SectionLabel extends StatelessWidget {
             ],
           ),
           RoundIndicator(
+            progressValue: 0.4,
             icon: Icons.fitness_center,
             onPressed: () {},
           )
