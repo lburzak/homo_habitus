@@ -14,12 +14,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Homo Habitus',
       theme: ThemeData(
-          colorScheme: const ColorScheme.dark(),
+          colorScheme: const ColorScheme.dark(onBackground: Color(0xff393939)),
           primarySwatch: Colors.green,
           textTheme: TextTheme(
-              headline6: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w300, fontSize: 24),
-              subtitle1: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
+            headline6:
+                GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
+            subtitle1:
+                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
           )),
       home: const Scaffold(
         body: HabitsPage(),
@@ -45,11 +46,43 @@ class SectionLabel extends StatelessWidget {
   const SectionLabel({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget build(BuildContext context) => Column(
         children: [
-          Text("Today", style: Theme.of(context).textTheme.headline6),
-          Text("47%", style: Theme.of(context).textTheme.subtitle1,)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Today", style: Theme.of(context).textTheme.headline6),
+              Text(
+                "47%",
+                style: Theme.of(context).textTheme.subtitle1,
+              )
+            ],
+          ),
+          RoundIndicator(
+            icon: Icons.fitness_center,
+            onPressed: () {},
+          )
         ],
       );
+}
+
+class RoundIndicator extends StatelessWidget {
+  final void Function()? onPressed;
+  final IconData icon;
+
+  const RoundIndicator({Key? key, this.onPressed, required this.icon})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Ink(
+      height: 72,
+      width: 72,
+      decoration: ShapeDecoration(
+          color: Theme.of(context).colorScheme.onBackground,
+          shape: const CircleBorder()),
+      child: IconButton(
+        iconSize: 38,
+        onPressed: onPressed,
+        icon: Icon(icon),
+      ));
 }
