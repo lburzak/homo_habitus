@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/round_indicator.dart';
 
+import 'habit_page.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -19,15 +21,24 @@ class MyApp extends StatelessWidget {
           colorScheme: const ColorScheme.dark(
               onBackground: Color(0xff393939), primary: Color(0xff306F1A)),
           iconTheme: const IconThemeData(color: Color(0xffBEBEBE)),
+          appBarTheme: AppBarTheme(
+            toolbarHeight: 80,
+            centerTitle: true,
+            elevation: 0,
+            titleTextStyle: Theme.of(context).textTheme.headline6,
+            textTheme: TextTheme(
+              headline6: GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24)
+            ),
+            backwardsCompatibility: true,
+            backgroundColor: Colors.transparent
+          ),
           textTheme: TextTheme(
             headline6:
                 GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
             subtitle1:
                 GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
           )),
-      home: Scaffold(
-        body: HabitsPage(),
-      ),
+      home: HabitPage(),
     );
   }
 }
