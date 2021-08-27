@@ -80,9 +80,23 @@ class RoundIndicator extends StatelessWidget {
       decoration: ShapeDecoration(
           color: Theme.of(context).colorScheme.onBackground,
           shape: const CircleBorder()),
-      child: IconButton(
-        iconSize: 38,
-        onPressed: onPressed,
-        icon: Icon(icon),
+      child: Stack(
+        fit: StackFit.loose,
+        alignment: Alignment.center,
+        children: [
+          const SizedBox(
+            width: 65,
+            height: 65,
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              value: 0.4,
+            ),
+          ),
+          IconButton(
+            iconSize: 38,
+            onPressed: onPressed,
+            icon: Icon(icon),
+          ),
+        ],
       ));
 }
