@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Homo Habitus',
       theme: ThemeData(
+          colorScheme: const ColorScheme.dark(),
           primarySwatch: Colors.green,
           textTheme: TextTheme(
               headline6: GoogleFonts.poppins(
