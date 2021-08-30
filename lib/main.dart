@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
                   fontWeight: FontWeight.bold, fontSize: 18),
             )),
         routes: {
-          "/": (context) => const HabitsPage(),
+          "/": (context) => const HomePage(),
           "/habit": (context) => const HabitPage(),
         },
       ),
@@ -55,8 +55,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HabitsPage extends StatelessWidget {
-  const HabitsPage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
