@@ -30,27 +30,30 @@ class HabitPage extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Stack(
-            alignment: Alignment.bottomRight,
-            children: [
-              Center(
-                child: RoundIndicator(
-                    height: 180,
-                    width: 180,
-                    progressValue: habit.goal.progressPercentage,
-                    progressStrokeWidth: 8,
-                    icon: IconData(habit.iconCodePoint,
-                        fontFamily: "MaterialIcons")),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 36),
-                child: Text(
-                  "${(habit.goal.progressPercentage * 100).toStringAsFixed(0)}%",
-                  style: Theme.of(context).textTheme.headline6,
+          SizedBox.square(
+            dimension: 220,
+            child: Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                Center(
+                  child: RoundIndicator(
+                      height: 180,
+                      width: 180,
+                      progressValue: habit.goal.progressPercentage,
+                      progressStrokeWidth: 8,
+                      icon: IconData(habit.iconCodePoint,
+                          fontFamily: "MaterialIcons")),
                 ),
-              )
-            ],
+                Padding(
+                  padding:
+                      const EdgeInsets.all(4),
+                  child: Text(
+                    "${(habit.goal.progressPercentage * 100).toStringAsFixed(0)}%",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                )
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 48.0),
