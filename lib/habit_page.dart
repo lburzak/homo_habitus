@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
+import 'package:homo_habitus/round_button.dart';
 import 'package:homo_habitus/round_indicator.dart';
 
 class HabitPage extends StatelessWidget {
@@ -17,6 +18,7 @@ class HabitPage extends StatelessWidget {
         title: Text(habit.name),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Stack(
             alignment: Alignment.bottomRight,
@@ -40,7 +42,29 @@ class HabitPage extends StatelessWidget {
               )
             ],
           ),
-
+          Padding(
+            padding: const EdgeInsets.only(bottom: 48.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                RoundButton(
+                  icon: Icons.remove,
+                  onPressed: () {},
+                ),
+                SizedBox(
+                    width: 64,
+                    height: 64,
+                    child: RoundButton(
+                      icon: Icons.add,
+                      onPressed: () {},
+                    )),
+                RoundButton(
+                  icon: Icons.exposure_plus_2,
+                  onPressed: () {},
+                )
+              ],
+            ),
+          )
         ],
       ),
     );
