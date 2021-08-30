@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/round_button.dart';
 import 'package:homo_habitus/round_indicator.dart';
 
 class HabitPage extends StatelessWidget {
-  final habitRepository = HabitRepository();
-
   @override
   Widget build(BuildContext context) {
-    final habits = habitRepository.getTodayHabits();
+    final HabitRepository habitsRepository = RepositoryProvider.of(context);
+    final habits = habitsRepository.getTodayHabits();
     const habitId = 1;
     final habit = habits[habitId];
 

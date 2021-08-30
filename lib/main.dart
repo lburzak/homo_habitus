@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/round_indicator.dart';
@@ -30,17 +31,23 @@ class MyApp extends StatelessWidget {
               headline6: GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
             ),
             backwardsCompatibility: true,
-            backgroundColor: Colors.transparent
-          ),
+              backgroundColor: Colors.transparent),
           textTheme: TextTheme(
-            headline4: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 36),
-            headline5: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: const Color(0xff7d7d7d)),
+            headline4:
+                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 36),
+            headline5: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: const Color(0xff7d7d7d)),
             headline6:
                 GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
             subtitle1:
                 GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
           )),
-      home: HabitPage(),
+      home: RepositoryProvider(
+        create: (context) => HabitRepository(),
+        child: HabitPage(),
+      ),
     );
   }
 }
