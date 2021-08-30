@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 
-import 'habit_page.dart';
-import 'home_page.dart';
+import 'page/habit_page.dart';
+import 'page/home_page.dart';
 
 void main() {
   runApp(const MyApp());
