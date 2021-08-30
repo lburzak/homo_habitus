@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/round_indicator.dart';
 
+import 'habit_page.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -30,19 +32,29 @@ class HomePage extends StatelessWidget {
                           (context, index) => Center(
                         child: RoundIndicator(
                           height: 78,
-                          width: 78,
-                          progressValue: habits[index].goal.progressPercentage,
-                          icon: IconData(habits[index].iconCodePoint, fontFamily: "MaterialIcons"),
-                          onPressed: () {},
-                        ),
+                              width: 78,
+                              progressValue:
+                                  habits[index].goal.progressPercentage,
+                              icon: IconData(habits[index].iconCodePoint,
+                                  fontFamily: "MaterialIcons"),
+                              onPressed: () { _openHabitScreen(context, index); },
+                            ),
                       ),
                       childCount: habits.length),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 12, mainAxisSpacing: 12)),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12)),
             )
           ],
         ),
       ),
     );
+  }
+
+  void _openHabitScreen(BuildContext context, int habitId) {
+    Navigator.pushNamed(
+        context, "/habit", arguments: HabitPageArguments(habitId));
   }
 }
 

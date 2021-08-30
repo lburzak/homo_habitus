@@ -5,6 +5,12 @@ import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/round_button.dart';
 import 'package:homo_habitus/widget/round_indicator.dart';
 
+class HabitPageArguments {
+  final int habitId;
+
+  const HabitPageArguments(this.habitId);
+}
+
 class HabitPage extends StatelessWidget {
   const HabitPage({Key? key}) : super(key: key);
 
@@ -12,7 +18,8 @@ class HabitPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final HabitRepository habitsRepository = RepositoryProvider.of(context);
     final habits = habitsRepository.getTodayHabits();
-    const habitId = 1;
+    final args = ModalRoute.of(context)!.settings.arguments as HabitPageArguments;
+    final habitId = args.habitId;
     final habit = habits[habitId];
 
     return Scaffold(
