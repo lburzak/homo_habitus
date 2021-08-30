@@ -99,14 +99,28 @@ class ProgressCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var current = goal.current.toString();
+    var target = goal.target.toString();
+
+    if (goal.unit == GoalUnit.milliseconds) {
+      current = Duration(milliseconds: goal.current).formatCounterDuration();
+      target = Duration(milliseconds: goal.target).formatCounterDuration();
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("${goal.current} ",
-            style: Theme.of(context).textTheme.headline4),
-        Text("/ ${goal.target}",
-            style: Theme.of(context).textTheme.headline5)
+        Text("$current ", style: Theme.of(context).textTheme.headline4),
+        Text("/ $target", style: Theme.of(context).textTheme.headline5)
       ],
     );
+  }
+}
+
+extension Format on Duration {
+  String formatCounterDuration() {
+    return inHours > 0
+        ? toString().split('.').first.padLeft(8, "0")
+        : toString().substring(2, 7);
   }
 }
