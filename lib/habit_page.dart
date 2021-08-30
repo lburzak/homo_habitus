@@ -44,24 +44,38 @@ class HabitPage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 48.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Column(
               children: [
-                RoundButton(
-                  icon: Icons.remove,
-                  onPressed: () {},
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("3", style: Theme.of(context).textTheme.headline4),
+                      Text("/4", style: Theme.of(context).textTheme.headline5)
+                    ],
+                  ),
                 ),
-                SizedBox(
-                    width: 64,
-                    height: 64,
-                    child: RoundButton(
-                      icon: Icons.add,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    RoundButton(
+                      icon: Icons.remove,
                       onPressed: () {},
-                    )),
-                RoundButton(
-                  icon: Icons.exposure_plus_2,
-                  onPressed: () {},
-                )
+                    ),
+                    SizedBox(
+                        width: 64,
+                        height: 64,
+                        child: RoundButton(
+                          icon: Icons.add,
+                          onPressed: () {},
+                        )),
+                    RoundButton(
+                      icon: Icons.exposure_plus_2,
+                      onPressed: () {},
+                    )
+                  ],
+                ),
               ],
             ),
           )
