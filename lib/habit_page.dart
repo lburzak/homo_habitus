@@ -6,6 +6,8 @@ import 'package:homo_habitus/round_button.dart';
 import 'package:homo_habitus/round_indicator.dart';
 
 class HabitPage extends StatelessWidget {
+  const HabitPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final HabitRepository habitsRepository = RepositoryProvider.of(context);

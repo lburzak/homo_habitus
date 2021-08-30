@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
           )),
       home: RepositoryProvider(
         create: (context) => HabitRepository(),
-        child: HabitPage(),
+        child: const HabitPage(),
       ),
     );
   }
