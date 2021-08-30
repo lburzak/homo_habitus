@@ -46,7 +46,10 @@ class MyApp extends StatelessWidget {
               subtitle1: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold, fontSize: 18),
             )),
-        home: const HabitPage(),
+        routes: {
+          "/": (context) => const HabitsPage(),
+          "/habit": (context) => const HabitPage(),
+        },
       ),
     );
   }
