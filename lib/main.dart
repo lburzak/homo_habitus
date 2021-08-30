@@ -15,38 +15,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Homo Habitus',
-      theme: ThemeData(
-          colorScheme: const ColorScheme.dark(
-              onBackground: Color(0xff393939), primary: Color(0xff306F1A)),
-          iconTheme: const IconThemeData(color: Color(0xffBEBEBE)),
-          appBarTheme: AppBarTheme(
-            toolbarHeight: 80,
-            centerTitle: true,
-            elevation: 0,
-            titleTextStyle: Theme.of(context).textTheme.headline6,
+    return RepositoryProvider(
+      create: (context) => HabitRepository(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Homo Habitus',
+        theme: ThemeData(
+            colorScheme: const ColorScheme.dark(
+                onBackground: Color(0xff393939), primary: Color(0xff306F1A)),
+            iconTheme: const IconThemeData(color: Color(0xffBEBEBE)),
+            appBarTheme: AppBarTheme(
+                toolbarHeight: 80,
+                centerTitle: true,
+                elevation: 0,
+                titleTextStyle: Theme.of(context).textTheme.headline6,
             textTheme: TextTheme(
               headline6: GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
             ),
             backwardsCompatibility: true,
               backgroundColor: Colors.transparent),
           textTheme: TextTheme(
-            headline4:
-                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 36),
-            headline5: GoogleFonts.poppins(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                color: const Color(0xff7d7d7d)),
-            headline6:
-                GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
-            subtitle1:
-                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
-          )),
-      home: RepositoryProvider(
-        create: (context) => HabitRepository(),
-        child: const HabitPage(),
+            headline4: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold, fontSize: 36),
+              headline5: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  color: const Color(0xff7d7d7d)),
+              headline6: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w300, fontSize: 24),
+              subtitle1: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold, fontSize: 18),
+            )),
+        home: const HabitPage(),
       ),
     );
   }
