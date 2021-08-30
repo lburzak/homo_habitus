@@ -51,8 +51,16 @@ class HabitPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("3", style: Theme.of(context).textTheme.headline4),
-                      Text("/4", style: Theme.of(context).textTheme.headline5)
+                      Text("3",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(letterSpacing: 6)),
+                      Text("/4",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline5!
+                              .copyWith(letterSpacing: 6))
                     ],
                   ),
                 ),

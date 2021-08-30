@@ -27,12 +27,14 @@ class MyApp extends StatelessWidget {
             elevation: 0,
             titleTextStyle: Theme.of(context).textTheme.headline6,
             textTheme: TextTheme(
-              headline6: GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24)
+              headline6: GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
             ),
             backwardsCompatibility: true,
             backgroundColor: Colors.transparent
           ),
           textTheme: TextTheme(
+            headline4: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 36),
+            headline5: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: const Color(0xff7d7d7d)),
             headline6:
                 GoogleFonts.poppins(fontWeight: FontWeight.w300, fontSize: 24),
             subtitle1:
