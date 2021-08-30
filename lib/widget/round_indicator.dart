@@ -7,8 +7,9 @@ class RoundIndicator extends StatelessWidget {
   final double width;
   final double progressValue;
   final double progressStrokeWidth;
+  final bool active;
 
-  const RoundIndicator({Key? key, this.onPressed, required this.icon, this.height = 72, this.width = 72, this.progressValue = 0, this.progressStrokeWidth = 3})
+  const RoundIndicator({Key? key, this.onPressed, required this.icon, this.height = 72, this.width = 72, this.progressValue = 0, this.progressStrokeWidth = 3, this.active = false})
       : super(key: key);
 
   @override
@@ -16,7 +17,7 @@ class RoundIndicator extends StatelessWidget {
       height: height,
       width: width,
       decoration: ShapeDecoration(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: active ? Theme.of(context).colorScheme.primaryVariant : Theme.of(context).colorScheme.onBackground,
           shape: const CircleBorder()),
       child: Stack(
         fit: StackFit.loose,

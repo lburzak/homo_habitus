@@ -31,6 +31,7 @@ class HomePage extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                           (context, index) => Center(
                         child: RoundIndicator(
+                          active: false,
                           height: 78,
                               width: 78,
                               progressValue:
