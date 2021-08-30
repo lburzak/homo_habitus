@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/round_indicator.dart';
+import 'package:homo_habitus/widget/round_indicator.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
