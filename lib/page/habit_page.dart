@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/round_button.dart';
 import 'package:homo_habitus/widget/round_indicator.dart';
@@ -57,15 +58,7 @@ class HabitPage extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("${habit.goal.current} ",
-                          style: Theme.of(context).textTheme.headline4),
-                      Text("/ ${habit.goal.target}",
-                          style: Theme.of(context).textTheme.headline5)
-                    ],
-                  ),
+                  child: ProgressCounter(goal: habit.goal),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -92,6 +85,28 @@ class HabitPage extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class ProgressCounter extends StatelessWidget {
+  const ProgressCounter({
+    Key? key,
+    required this.goal,
+  }) : super(key: key);
+
+  final Goal goal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text("${goal.current} ",
+            style: Theme.of(context).textTheme.headline4),
+        Text("/ ${goal.target}",
+            style: Theme.of(context).textTheme.headline5)
+      ],
     );
   }
 }
