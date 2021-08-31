@@ -6,6 +6,7 @@ class HabitRepository {
   List<Habit> getTodayHabits() {
     return [
       Habit(
+        id: 0,
         name: "Workout",
         iconCodePoint: Icons.fitness_center.codePoint,
         goal: Goal(
@@ -15,6 +16,7 @@ class HabitRepository {
         )
       ),
       Habit(
+        id: 1,
         name: "Say hi",
         iconCodePoint: Icons.people.codePoint,
         goal: Goal(
