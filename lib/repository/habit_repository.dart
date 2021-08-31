@@ -19,7 +19,7 @@ class HabitRepository {
         name: "Say hi",
         iconName: 'people',
         goal: Goal(
-          current: 3,
+          current: 4,
           target: 4,
           unit: GoalUnit.times
         )

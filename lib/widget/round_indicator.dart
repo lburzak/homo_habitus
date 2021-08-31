@@ -31,6 +31,7 @@ class RoundIndicator extends StatelessWidget {
                   heightFactor: 0.9,
                   widthFactor: 0.9,
                   child: CircularProgressIndicator(
+                    color: progressValue >= 1 ? Theme.of(context).colorScheme.secondary : null,
                     strokeWidth: progressStrokeWidth,
                     value: progressValue,
                   ),
