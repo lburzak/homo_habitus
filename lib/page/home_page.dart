@@ -34,15 +34,21 @@ class HomePage extends StatelessWidget {
                             onTap: () {
                               _openHabitScreen(context, index);
                             },
-                            child: RoundIndicator(
-                                active: false,
-                                progressValue:
-                                    habits[index].goal.progressPercentage,
-                                icon: Icon(
-                                  IconData(habits[index].iconCodePoint,
-                                      fontFamily: "MaterialIcons"),
-                                  size: 42,
-                                )),
+                            child: Hero(
+                              tag: "habit$index",
+                              child: Material(
+                                color: Colors.transparent,
+                                child: RoundIndicator(
+                                    active: false,
+                                    progressValue:
+                                        habits[index].goal.progressPercentage,
+                                    icon: Icon(
+                                      IconData(habits[index].iconCodePoint,
+                                          fontFamily: "MaterialIcons"),
+                                      size: 42,
+                                    )),
+                              ),
+                            ),
                           ),
                       childCount: habits.length),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

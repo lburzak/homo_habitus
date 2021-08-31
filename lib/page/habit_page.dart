@@ -34,11 +34,17 @@ class HabitPage extends StatelessWidget {
             child: FractionallySizedBox(
               widthFactor: 0.7,
               child: Center(
-                child: RoundIndicator(
-                    progressValue: habit.goal.progressPercentage,
-                    progressStrokeWidth: 8,
-                    icon: Icon(IconData(habit.iconCodePoint,
-                        fontFamily: "MaterialIcons"), size: 120)),
+                child: Hero(
+                  tag: "habit$habitId",
+                  child: Material(
+                    color: Colors.transparent,
+                    child: RoundIndicator(
+                        progressValue: habit.goal.progressPercentage,
+                        progressStrokeWidth: 8,
+                        icon: Icon(IconData(habit.iconCodePoint,
+                            fontFamily: "MaterialIcons"), size: 120)),
+                  ),
+                ),
               ),
             ),
           ),
