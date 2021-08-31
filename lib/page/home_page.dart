@@ -29,18 +29,21 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
               sliver: SliverGrid(
                   delegate: SliverChildBuilderDelegate(
-                          (context, index) => Center(
-                        child: RoundIndicator(
-                          active: false,
-                          height: 78,
-                              width: 78,
-                              progressValue:
-                                  habits[index].goal.progressPercentage,
-                              icon: IconData(habits[index].iconCodePoint,
-                                  fontFamily: "MaterialIcons"),
-                              onPressed: () { _openHabitScreen(context, index); },
-                            ),
-                      ),
+                      (context, index) => InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () {
+                              _openHabitScreen(context, index);
+                            },
+                            child: RoundIndicator(
+                                active: false,
+                                progressValue:
+                                    habits[index].goal.progressPercentage,
+                                icon: Icon(
+                                  IconData(habits[index].iconCodePoint,
+                                      fontFamily: "MaterialIcons"),
+                                  size: 42,
+                                )),
+                          ),
                       childCount: habits.length),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
