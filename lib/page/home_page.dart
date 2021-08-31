@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/widget/round_indicator.dart';
+import 'package:homo_habitus/widget/habit_indicator.dart';
 
 import 'habit_page.dart';
 
@@ -34,21 +34,7 @@ class HomePage extends StatelessWidget {
                             onTap: () {
                               _openHabitScreen(context, index);
                             },
-                            child: Hero(
-                              tag: "habit$index",
-                              child: Material(
-                                color: Colors.transparent,
-                                child: RoundIndicator(
-                                    active: false,
-                                    progressValue:
-                                        habits[index].goal.progressPercentage,
-                                    icon: Icon(
-                                      IconData(habits[index].iconCodePoint,
-                                          fontFamily: "MaterialIcons"),
-                                      size: 42,
-                                    )),
-                              ),
-                            ),
+                            child: HabitIndicator(habit: habits[index]),
                           ),
                       childCount: habits.length),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

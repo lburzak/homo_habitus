@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
+import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/round_button.dart';
-import 'package:homo_habitus/widget/round_indicator.dart';
 
 class HabitPageArguments {
   final int habitId;
@@ -34,16 +34,10 @@ class HabitPage extends StatelessWidget {
             child: FractionallySizedBox(
               widthFactor: 0.7,
               child: Center(
-                child: Hero(
-                  tag: "habit$habitId",
-                  child: Material(
-                    color: Colors.transparent,
-                    child: RoundIndicator(
-                        progressValue: habit.goal.progressPercentage,
-                        progressStrokeWidth: 8,
-                        icon: Icon(IconData(habit.iconCodePoint,
-                            fontFamily: "MaterialIcons"), size: 120)),
-                  ),
+                child: HabitIndicator(
+                  habit: habit,
+                  progressStrokeWidth: 8,
+                  iconSize: 120,
                 ),
               ),
             ),
