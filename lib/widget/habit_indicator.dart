@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/widget/round_indicator.dart';
 
@@ -24,9 +25,9 @@ class HabitIndicator extends StatelessWidget {
             active: false,
             progressStrokeWidth: progressStrokeWidth ?? 3,
             progressValue: habit.goal.progressPercentage,
-            icon: Icon(
-              IconData(habit.iconCodePoint, fontFamily: "MaterialIcons"),
-              size: iconSize,
+            body: SvgPicture.asset(
+              'assets/icons/${habit.iconName}.svg',
+              color: Theme.of(context).iconTheme.color,
             )),
       ),
     );
