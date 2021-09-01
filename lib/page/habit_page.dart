@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:homo_habitus/bloc/habit_detail_state.dart';
-import 'package:homo_habitus/model/goal.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homo_habitus/bloc/habit_preview_bloc.dart';
 import 'package:homo_habitus/model/habit_status.dart';
+import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/round_button.dart';
 
@@ -12,18 +13,29 @@ class HabitPageArguments {
   const HabitPageArguments(this.habitStatus);
 }
 
-class HabitPage extends StatelessWidget {  
+class HabitPage extends StatelessWidget {
   const HabitPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as HabitPageArguments;
-    final state = HabitDetailState.fromStatus(args.habitStatus);
-    final habit = state.habit;
+    final args =
+        ModalRoute.of(context)!.settings.arguments as HabitPageArguments;
 
+    return BlocProvider(
+        create: (BuildContext context) => HabitPreviewBloc(args.habitStatus, HabitRepository()),
+        child: const HabitPreview());
+  }
+}
+
+class HabitPreview extends StatelessWidget {
+  const HabitPreview({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(habit.name),
+        title: Text(
+            context.select((HabitPreviewBloc bloc) => bloc.state.habit.name)),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -33,7 +45,10 @@ class HabitPage extends StatelessWidget {
               widthFactor: 0.7,
               child: Center(
                 child: HabitIndicator(
-                  habitStatus: args.habitStatus,
+                  habitStatus: context.select((HabitPreviewBloc bloc) =>
+                      HabitStatus(
+                          completionRate: bloc.state.completionRate,
+                          habit: bloc.state.habit)),
                   progressStrokeWidth: 8,
                   iconSize: 120,
                 ),
@@ -44,13 +59,9 @@ class HabitPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 48.0),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ProgressCounter(
-                    current: state.currentProgress,
-                    target: state.goal.targetProgress,
-                    type: state.goal.type,
-                  ),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: ProgressCounter(),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -82,32 +93,30 @@ class HabitPage extends StatelessWidget {
 }
 
 class ProgressCounter extends StatelessWidget {
-  const ProgressCounter({
-    Key? key,
-    required this.type,
-    required this.current,
-    required this.target
-  }) : super(key: key);
-
-  final GoalType type;
-  final int current;
-  final int target;
+  const ProgressCounter({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var currentString = current.toString();
-    var targetString = target.toString();
+    final state = context.select((HabitPreviewBloc bloc) => bloc.state);
 
-    if (type == GoalType.timer) {
-      currentString = Duration(milliseconds: current).formatCounterDuration();
-      targetString = Duration(milliseconds: target).formatCounterDuration();
+    var current = "";
+    var target = "";
+
+    if (state is HabitPreviewCounter) {
+      current = state.currentCount.toString();
+      target = state.targetCount.toString();
+    } else if (state is HabitPreviewTimer) {
+      current = Duration(milliseconds: state.millisecondsPassed)
+          .formatCounterDuration();
+      target = Duration(milliseconds: state.targetMilliseconds)
+          .formatCounterDuration();
     }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("$currentString ", style: Theme.of(context).textTheme.headline4),
-        Text("/ $targetString", style: Theme.of(context).textTheme.headline5)
+        Text("$current ", style: Theme.of(context).textTheme.headline4),
+        Text("/ $target", style: Theme.of(context).textTheme.headline5)
       ],
     );
   }

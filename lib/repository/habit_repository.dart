@@ -1,4 +1,5 @@
 import 'package:homo_habitus/model/habit.dart';
+import 'package:homo_habitus/model/habit_progress.dart';
 import 'package:homo_habitus/model/habit_status.dart';
 
 class HabitRepository {
@@ -15,5 +16,9 @@ class HabitRepository {
           ),
           completionRate: 0.3)
     ];
+  }
+
+  GoalProgress getProgressByHabitId(int habitId) {
+    return TimerGoalProgress(3000, 60000);
   }
 }
