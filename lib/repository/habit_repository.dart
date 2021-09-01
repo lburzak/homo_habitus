@@ -1,5 +1,6 @@
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
+import 'package:homo_habitus/model/timeframe.dart';
 
 class HabitRepository {
   List<Habit> getTodayHabits() {
@@ -11,7 +12,8 @@ class HabitRepository {
         goal: Goal(
           current: 30 * 1000,
           target: 10 * 60 * 1000,
-          unit: GoalUnit.milliseconds
+          unit: GoalUnit.milliseconds,
+          timeframe: Timeframe.day
         )
       ),
       Habit(
@@ -21,7 +23,8 @@ class HabitRepository {
         goal: Goal(
           current: 4,
           target: 4,
-          unit: GoalUnit.times
+          unit: GoalUnit.times,
+          timeframe: Timeframe.day
         )
       )
     ];
