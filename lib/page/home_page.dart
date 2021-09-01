@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homo_habitus/model/habit_status.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 
@@ -32,9 +33,9 @@ class HomePage extends StatelessWidget {
                       (context, index) => InkWell(
                             customBorder: const CircleBorder(),
                             onTap: () {
-                              _openHabitScreen(context, index);
+                              _openHabitScreen(context, habits[index]);
                             },
-                            child: HabitIndicator(habit: habits[index]),
+                            child: HabitIndicator(habitStatus: habits[index]),
                           ),
                       childCount: habits.length),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -48,9 +49,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _openHabitScreen(BuildContext context, int habitId) {
+  void _openHabitScreen(BuildContext context, HabitStatus habitStatus) {
     Navigator.pushNamed(
-        context, "/habit", arguments: HabitPageArguments(habitId));
+        context, "/habit", arguments: HabitPageArguments(habitStatus));
   }
 }
 

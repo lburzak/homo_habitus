@@ -1,17 +1,14 @@
 import 'package:homo_habitus/model/timeframe.dart';
 
 class Goal {
-  int current;
-  int target;
-  GoalUnit unit;
+  int targetProgress;
+  GoalType type;
   Timeframe timeframe;
 
-  Goal({required this.current, required this.target, required this.unit, required this.timeframe});
-
-  double get progressPercentage => current / target;
+  Goal({required this.targetProgress, required this.type, required this.timeframe});
 }
 
-enum GoalUnit {
-  times,
-  milliseconds
+enum GoalType {
+  counter,
+  timer
 }

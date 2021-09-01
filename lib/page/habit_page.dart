@@ -1,27 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homo_habitus/bloc/habit_detail_state.dart';
 import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
+import 'package:homo_habitus/model/habit_status.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/round_button.dart';
 
 class HabitPageArguments {
-  final int habitId;
+  final HabitStatus habitStatus;
 
-  const HabitPageArguments(this.habitId);
+  const HabitPageArguments(this.habitStatus);
 }
 
-class HabitPage extends StatelessWidget {
+class HabitPage extends StatelessWidget {  
   const HabitPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final HabitRepository habitsRepository = RepositoryProvider.of(context);
-    final habits = habitsRepository.getTodayHabits();
     final args = ModalRoute.of(context)!.settings.arguments as HabitPageArguments;
-    final habitId = args.habitId;
-    final habit = habits[habitId];
+    final state = HabitDetailState.fromStatus(args.habitStatus);
+    final habit = state.habit;
 
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +33,7 @@ class HabitPage extends StatelessWidget {
               widthFactor: 0.7,
               child: Center(
                 child: HabitIndicator(
-                  habit: habit,
+                  habitStatus: args.habitStatus,
                   progressStrokeWidth: 8,
                   iconSize: 120,
                 ),
@@ -48,7 +46,11 @@ class HabitPage extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ProgressCounter(goal: habit.goal),
+                  child: ProgressCounter(
+                    current: state.currentProgress,
+                    target: state.goal.targetProgress,
+                    type: state.goal.type,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -82,26 +84,30 @@ class HabitPage extends StatelessWidget {
 class ProgressCounter extends StatelessWidget {
   const ProgressCounter({
     Key? key,
-    required this.goal,
+    required this.type,
+    required this.current,
+    required this.target
   }) : super(key: key);
 
-  final Goal goal;
+  final GoalType type;
+  final int current;
+  final int target;
 
   @override
   Widget build(BuildContext context) {
-    var current = goal.current.toString();
-    var target = goal.target.toString();
+    var currentString = current.toString();
+    var targetString = target.toString();
 
-    if (goal.unit == GoalUnit.milliseconds) {
-      current = Duration(milliseconds: goal.current).formatCounterDuration();
-      target = Duration(milliseconds: goal.target).formatCounterDuration();
+    if (type == GoalType.timer) {
+      currentString = Duration(milliseconds: current).formatCounterDuration();
+      targetString = Duration(milliseconds: target).formatCounterDuration();
     }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("$current ", style: Theme.of(context).textTheme.headline4),
-        Text("/ $target", style: Theme.of(context).textTheme.headline5)
+        Text("$currentString ", style: Theme.of(context).textTheme.headline4),
+        Text("/ $targetString", style: Theme.of(context).textTheme.headline5)
       ],
     );
   }
