@@ -26,6 +26,7 @@ class CreateHabitPage extends StatelessWidget {
                           height: 32,
                           child: TextField(
                             textAlign: TextAlign.center,
+                            decoration: InputDecoration.collapsed(hintText: "Name"),
                           ),
                         ),
                       ),
