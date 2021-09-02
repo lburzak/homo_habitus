@@ -3,11 +3,20 @@ import 'package:google_fonts/google_fonts.dart';
 
 final themeData = ThemeData(
     colorScheme: const ColorScheme.dark(
-        onBackground: Color(0xff393939), primary: Color(0xff306F1A), primaryVariant: Color(0xff275119), secondary: Color(
-        0xff47aca4)),
+        onBackground: Color(0xff393939),
+        onPrimary: Colors.white,
+        primary: Color(0xff306F1A),
+        primaryVariant: Color(0xff275119),
+        secondary: Color(0xff47aca4)),
     iconTheme: const IconThemeData(color: Color(0xffBEBEBE)),
+    floatingActionButtonTheme: _fabTheme,
     appBarTheme: _appBarTheme,
-    textTheme: _textTheme);
+    textTheme: _textTheme,
+);
+
+const _fabTheme = FloatingActionButtonThemeData(
+    backgroundColor: Color(0xff393939)
+);
 
 final _textTheme = TextTheme(
   headline4: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 36),
@@ -24,6 +33,4 @@ final _appBarTheme = AppBarTheme(
     centerTitle: true,
     elevation: 0,
     titleTextStyle: _textTheme.headline6,
-    textTheme: _textTheme,
-    backwardsCompatibility: true,
     backgroundColor: Colors.transparent);

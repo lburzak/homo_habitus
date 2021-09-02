@@ -15,28 +15,33 @@ class HomePage extends StatelessWidget {
     final habits = habitRepository.getTodayHabits();
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          child:
+              Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
+          onPressed: () { _openNewHabitScreen(context); }),
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         child: CustomScrollView(
           slivers: [
             SliverPadding(
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-              sliver: SliverFixedExtentList(delegate: SliverChildBuilderDelegate(
+              sliver: SliverFixedExtentList(
+                  delegate: SliverChildBuilderDelegate(
                       (context, index) => const SectionLabel(),
-                  childCount: 1
-              ), itemExtent: 30),
+                      childCount: 1),
+                  itemExtent: 30),
             ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
               sliver: SliverGrid(
                   delegate: SliverChildBuilderDelegate(
-                      (context, index) => InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: () {
-                              _openHabitScreen(context, habits[index]);
-                            },
-                            child: HabitIndicator(habitStatus: habits[index]),
-                          ),
+                          (context, index) => InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () {
+                          _openHabitScreen(context, habits[index]);
+                        },
+                        child: HabitIndicator(habitStatus: habits[index]),
+                      ),
                       childCount: habits.length),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -50,8 +55,12 @@ class HomePage extends StatelessWidget {
   }
 
   void _openHabitScreen(BuildContext context, HabitStatus habitStatus) {
-    Navigator.pushNamed(
-        context, "/habit", arguments: HabitPageArguments(habitStatus));
+    Navigator.pushNamed(context, "/habit",
+        arguments: HabitPageArguments(habitStatus));
+  }
+
+  void _openNewHabitScreen(BuildContext context) {
+    Navigator.pushNamed(context, "/create_habit");
   }
 }
 
