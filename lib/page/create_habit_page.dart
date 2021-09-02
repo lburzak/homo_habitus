@@ -44,7 +44,18 @@ class CreateHabitPage extends StatelessWidget {
                             SizedBox(
                               height: 32,
                               child: OptionSelector(
-                                options: [Option("Counter"), Option("Timer")],
+                                options: [
+                                  Option("Counter",
+                                      leading: const Icon(
+                                        Icons.tag,
+                                        size: 16,
+                                      )),
+                                  Option("Timer",
+                                      leading: const Icon(
+                                        Icons.timer,
+                                        size: 16,
+                                      ))
+                                ],
                               ),
                             ),
                             Text("for 30 minutes")
@@ -126,7 +137,7 @@ class _OptionSelectorState extends State<OptionSelector> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: widget.options
             .mapIndexed((option, index) => OptionView(
-                  option.label,
+          option,
                   selected: index == selectedIndex,
                   onTap: index != selectedIndex
                       ? () {
@@ -148,15 +159,16 @@ class _OptionSelectorState extends State<OptionSelector> {
 
 class Option {
   final String label;
+  final Icon? leading;
 
-  Option(this.label);
+  Option(this.label, {this.leading});
 }
 
 class OptionView extends StatelessWidget {
-  const OptionView(this.label, {Key? key, this.selected = false, this.onTap})
+  const OptionView(this.option, {Key? key, this.selected = false, this.onTap})
       : super(key: key);
 
-  final String label;
+  final Option option;
   final bool selected;
   final void Function()? onTap;
 
@@ -168,11 +180,23 @@ class OptionView extends StatelessWidget {
           selected ? Theme.of(context).colorScheme.primary : Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        child: Center(
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-          ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+                left: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: option.leading ?? const SizedBox.shrink(),
+                )),
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                option.label,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
         ),
       ),
     ));
