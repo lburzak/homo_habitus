@@ -10,62 +10,64 @@ class CreateHabitPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('New habit'),
         ),
-        body: Center(
-          child: FractionallySizedBox(
-            widthFactor: 0.8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: const [
-                    IconSelection(),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all(12.0),
-                        child: SizedBox(
-                          height: 32,
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            decoration: InputDecoration.collapsed(hintText: "Name"),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                FormSection("Goal",
-                    child: Material(
-                      clipBehavior: Clip.hardEdge,
-                      borderRadius: BorderRadius.circular(12),
-                      color: Theme.of(context).colorScheme.onBackground,
-                      child: Column(
-                        children: [
-                          SizedBox(
+        body: SingleChildScrollView(
+          child: Center(
+            child: FractionallySizedBox(
+              widthFactor: 0.8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: const [
+                      IconSelection(),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: SizedBox(
                             height: 32,
-                            child: OptionSelector(
-                              options: [Option("Counter"), Option("Timer")],
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              decoration: InputDecoration.collapsed(hintText: "Name"),
                             ),
                           ),
-                          Text("for 30 minutes")
-                        ],
-                      ),
-                    )),
-                FormSection("Repetition",
-                    child: Material(
-                      borderRadius: BorderRadius.circular(12),
-                      clipBehavior: Clip.hardEdge,
-                      child: SizedBox(
-                        height: 32,
-                        child: OptionSelector(
-                          options: [
-                            Option("Daily"),
-                            Option("Weekly"),
-                            Option("Monthly")
-                          ],
                         ),
                       ),
-                    ))
-              ],
+                    ],
+                  ),
+                  FormSection("Goal",
+                      child: Material(
+                        clipBehavior: Clip.hardEdge,
+                        borderRadius: BorderRadius.circular(12),
+                        color: Theme.of(context).colorScheme.onBackground,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 32,
+                              child: OptionSelector(
+                                options: [Option("Counter"), Option("Timer")],
+                              ),
+                            ),
+                            Text("for 30 minutes")
+                          ],
+                        ),
+                      )),
+                  FormSection("Repetition",
+                      child: Material(
+                        borderRadius: BorderRadius.circular(12),
+                        clipBehavior: Clip.hardEdge,
+                        child: SizedBox(
+                          height: 32,
+                          child: OptionSelector(
+                            options: [
+                              Option("Daily"),
+                              Option("Weekly"),
+                              Option("Monthly")
+                            ],
+                          ),
+                        ),
+                      ))
+                ],
+              ),
             ),
           ),
         ),
