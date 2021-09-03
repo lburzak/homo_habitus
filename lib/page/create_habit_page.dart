@@ -42,7 +42,7 @@ class CreateHabitPage extends StatelessWidget {
                         child: Column(
                           children: [
                             SizedBox(
-                              height: 32,
+                              height: 48,
                               child: OptionSelector(
                                 options: [
                                   Option("Counter",
@@ -67,7 +67,7 @@ class CreateHabitPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         clipBehavior: Clip.hardEdge,
                         child: SizedBox(
-                          height: 32,
+                          height: 48,
                           child: OptionSelector(
                             options: [
                               Option("Daily"),
