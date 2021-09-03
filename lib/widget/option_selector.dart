@@ -72,7 +72,7 @@ class OptionView extends StatelessWidget {
     return Expanded(
         child: Material(
       color:
-          selected ? Theme.of(context).colorScheme.primary : Colors.transparent,
+          selected ? Colors.transparent : Theme.of(context).colorScheme.background.withAlpha(30),
       child: InkWell(
         onTap: onTap,
         child: Stack(
