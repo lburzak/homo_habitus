@@ -123,51 +123,39 @@ class FormSection extends StatelessWidget {
   }
 }
 
-class OptionSelector extends StatefulWidget {
-  const OptionSelector({Key? key, required this.options, this.controller})
-      : super(key: key);
+class OptionSelector extends StatelessWidget {
+  OptionSelector(
+      {Key? key, required this.options, OptionController? controller})
+      : super(key: key) {
+    _controller = controller ?? OptionController();
+  }
 
   final List<Option> options;
-  final OptionController? controller;
-
-  @override
-  State<OptionSelector> createState() => _OptionSelectorState();
-}
-
-class _OptionSelectorState extends State<OptionSelector> {
-  int selectedIndex = 0;
+  late final OptionController _controller;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme
-          .of(context)
-          .colorScheme
-          .onBackground,
+      color: Theme.of(context).colorScheme.onBackground,
       clipBehavior: Clip.hardEdge,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: widget.options
-            .mapIndexed((option, index) =>
-            OptionView(
-              option,
-              selected: index == selectedIndex,
-              onTap: index != selectedIndex
-                  ? () {
-                _selectIndex(index);
-              }
-                  : null,
-            ))
-            .toList(),
+      child: ValueListenableBuilder(
+        valueListenable: _controller.selectedIndex,
+        builder: (context, selectedIndex, child) => Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: options
+              .mapIndexed((option, index) => OptionView(
+                    option,
+                    selected: index == selectedIndex,
+                    onTap: index != selectedIndex
+                        ? () {
+                            _controller.selectIndex(index);
+                          }
+                        : null,
+                  ))
+              .toList(),
+        ),
       ),
     );
-  }
-
-  void _selectIndex(int index) {
-    setState(() {
-      selectedIndex = index;
-      widget.controller?.selectIndex(index);
-    });
   }
 }
 
