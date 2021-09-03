@@ -3,15 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
+import 'package:homo_habitus/widget/round_button.dart';
 
 class CreateHabitPage extends StatelessWidget {
   CreateHabitPage({Key? key}) : super(key: key);
 
   final _goalOptionController = OptionController();
+  final _habitNameController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: const Text('New habit'),
         ),
@@ -23,16 +24,18 @@ class CreateHabitPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
-                    children: const [
-                      IconSelection(),
+                    children: [
+                      const IconSelection(),
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(12.0),
                           child: SizedBox(
                             height: 32,
                             child: TextField(
+                              controller: _habitNameController,
                               textAlign: TextAlign.center,
-                              decoration: InputDecoration.collapsed(hintText: "Name"),
+                              decoration: const InputDecoration.collapsed(
+                                  hintText: "Name"),
                             ),
                           ),
                         ),
@@ -103,21 +106,24 @@ class CreateHabitPage extends StatelessWidget {
                           ],
                         ),
                       )),
-                  FormSection("Repetition",
-                      child: Material(
-                        borderRadius: BorderRadius.circular(12),
-                        clipBehavior: Clip.hardEdge,
-                        child: SizedBox(
-                          height: 48,
-                          child: OptionSelector(
-                            options: [
-                              Option("Daily"),
-                              Option("Weekly"),
-                              Option("Monthly")
-                            ],
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: FormSection("Repetition",
+                        child: Material(
+                          borderRadius: BorderRadius.circular(12),
+                          clipBehavior: Clip.hardEdge,
+                          child: SizedBox(
+                            height: 48,
+                            child: OptionSelector(
+                              options: [
+                                Option("Daily"),
+                                Option("Weekly"),
+                                Option("Monthly")
+                              ],
+                            ),
                           ),
-                        ),
-                      ))
+                        )),
+                  )
                 ],
               ),
             ),
