@@ -88,6 +88,7 @@ class CreateHabitPage extends StatelessWidget {
                                                   keyboardType: TextInputType.number,
                                                   textAlign: TextAlign.center,
                                                   decoration: const InputDecoration(
+                                                    border: InputBorder.none,
                                                     suffixText: "times",
                                                   ),
                                                 ),
