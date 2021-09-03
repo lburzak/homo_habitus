@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class CreateHabitPage extends StatelessWidget {
-  const CreateHabitPage({Key? key}) : super(key: key);
+  CreateHabitPage({Key? key}) : super(key: key);
+
+  final _goalOptionController = OptionController();
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) =>
+      Scaffold(
         appBar: AppBar(
           title: const Text('New habit'),
         ),
@@ -44,6 +48,7 @@ class CreateHabitPage extends StatelessWidget {
                             SizedBox(
                               height: 48,
                               child: OptionSelector(
+                                controller: _goalOptionController,
                                 options: [
                                   Option("Counter",
                                       leading: const Icon(
@@ -58,7 +63,12 @@ class CreateHabitPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Text("for 30 minutes")
+                            ValueListenableBuilder<int>(
+                                valueListenable: _goalOptionController.selectedIndex,
+                                builder: (context, value, child) =>
+                                value == 0
+                                    ? Text("30 times")
+                                    : Text("for 30 minutes"))
                           ],
                         ),
                       )),
@@ -114,37 +124,40 @@ class FormSection extends StatelessWidget {
 }
 
 class OptionSelector extends StatefulWidget {
-  const OptionSelector({
-    Key? key,
-    required this.options,
-  }) : super(key: key);
+  const OptionSelector({Key? key, required this.options, this.controller})
+      : super(key: key);
 
   final List<Option> options;
+  final OptionController? controller;
 
   @override
   State<OptionSelector> createState() => _OptionSelectorState();
 }
 
 class _OptionSelectorState extends State<OptionSelector> {
-  int selectedIndex = 1;
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).colorScheme.onBackground,
+      color: Theme
+          .of(context)
+          .colorScheme
+          .onBackground,
       clipBehavior: Clip.hardEdge,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: widget.options
-            .mapIndexed((option, index) => OptionView(
-          option,
-                  selected: index == selectedIndex,
-                  onTap: index != selectedIndex
-                      ? () {
-                          _selectIndex(index);
-                        }
-                      : null,
-                ))
+            .mapIndexed((option, index) =>
+            OptionView(
+              option,
+              selected: index == selectedIndex,
+              onTap: index != selectedIndex
+                  ? () {
+                _selectIndex(index);
+              }
+                  : null,
+            ))
             .toList(),
       ),
     );
@@ -153,8 +166,23 @@ class _OptionSelectorState extends State<OptionSelector> {
   void _selectIndex(int index) {
     setState(() {
       selectedIndex = index;
+      widget.controller?.selectIndex(index);
     });
   }
+}
+
+class OptionController {
+  final int initialIndex;
+  final ValueNotifier<int> _selectedIndex;
+
+  ValueListenable<int> get selectedIndex => _selectedIndex;
+
+  void selectIndex(int value) {
+    _selectedIndex.value = value;
+  }
+
+  OptionController({this.initialIndex = 0})
+      : _selectedIndex = ValueNotifier(initialIndex);
 }
 
 class Option {
