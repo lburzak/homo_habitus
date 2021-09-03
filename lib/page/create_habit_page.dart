@@ -68,7 +68,37 @@ class CreateHabitPage extends StatelessWidget {
                                 valueListenable: _goalOptionController.selectedIndex,
                                 builder: (context, value, child) =>
                                 value == 0
-                                    ? Text("30 times")
+                                    ? Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16.0),
+                                              child: RoundButton(icon: Icons.remove, onPressed: () {},),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                TextField(
+                                                  controller: TextEditingController(text: "0"),
+                                                  keyboardType: TextInputType.number,
+                                                  textAlign: TextAlign.center,
+                                                  decoration: const InputDecoration(
+                                                    suffixText: "times",
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16.0),
+                                              child: RoundButton(icon: Icons.add, onPressed: () {},),
+                                            ),
+                                          )
+                                        ],
+                                      )
                                     : Text("for 30 minutes"))
                           ],
                         ),
