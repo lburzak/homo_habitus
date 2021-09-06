@@ -108,7 +108,10 @@ class CreateHabitPage extends StatelessWidget {
                                           )
                                         ],
                                       )
-                                    : DurationPicker())
+                                    : const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: DurationPicker(),
+                                      ))
                           ],
                         ),
                       )),
@@ -206,14 +209,13 @@ class WheelPicker<T> extends StatelessWidget {
       items.map(buildChild ?? _buildChildDefault).toList();
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 120,
-        child: ListWheelScrollView(
-          itemExtent: 30,
-          children: _buildChildren(),
-          useMagnifier: false,
-          overAndUnderCenterOpacity: 0.5,
-        ),
+  Widget build(BuildContext context) => ListWheelScrollView(
+        physics: const BouncingScrollPhysics(),
+        itemExtent: 30,
+        children: _buildChildren(),
+        // useMagnifier: true,
+        magnification: 1.3,
+        overAndUnderCenterOpacity: 0.5,
       );
 }
 
@@ -251,36 +253,57 @@ class DurationPicker extends StatelessWidget {
   const DurationPicker({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Expanded(
-              child: NumberPicker.builder(
-            min: 0,
-            max: 12,
-            step: 1,
-            buildChild: (number) => Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  number.toString(),
-                )),
-          )),
-          const SizedBox(
-              width: 30,
-              child: Text(
-                ":",
-                textAlign: TextAlign.center,
-              )),
-          Expanded(
-              child: NumberPicker.builder(
-            min: 0,
-            max: 60,
-            step: 5,
-            buildChild: (number) => Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  number.toString(),
-                )),
-          )),
-        ],
+  Widget build(BuildContext context) => SizedBox(
+        height: 80,
+        child: Row(
+          children: [
+            Expanded(
+                child: Column(
+              children: [
+                Text("hours",
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1
+                        ?.copyWith(color: const Color(0x99ffffff))),
+                Expanded(
+                  child: NumberPicker.builder(
+                    min: 0,
+                    max: 12,
+                    step: 1,
+                    buildChild: (number) => Text(number.toString(),
+                        style: Theme.of(context).textTheme.subtitle1),
+                  ),
+                ),
+              ],
+            )),
+            SizedBox(
+                width: 30,
+                child: Text(":",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1
+                        ?.copyWith(color: const Color(0x99ffffff)))),
+            Expanded(
+                child: Column(
+              children: [
+                Text("minutes",
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1
+                        ?.copyWith(color: const Color(0x99ffffff))),
+                Expanded(
+                  child: NumberPicker.builder(
+                    min: 0,
+                    max: 60,
+                    step: 5,
+                    buildChild: (number) => Text(number.toString(),
+                        style: Theme.of(context).textTheme.subtitle1),
+                  ),
+                ),
+              ],
+            )),
+          ],
+        ),
       );
 }
