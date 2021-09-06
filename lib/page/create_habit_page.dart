@@ -108,12 +108,7 @@ class CreateHabitPage extends StatelessWidget {
                                           )
                                         ],
                                       )
-                                    : Row(
-                                      children: [
-                                        Expanded(child: NumberPicker(min: 0, max: 12, step: 1)),
-                                        Expanded(child: NumberPicker(min: 0, max: 60, step: 5)),
-                                      ],
-                                    ))
+                                    : DurationPicker())
                           ],
                         ),
                       )),
@@ -195,12 +190,20 @@ class IconSelection extends StatelessWidget {
 
 class WheelPicker<T> extends StatelessWidget {
   final List<T> items;
+  final Widget Function(T)? buildChild;
 
-  const WheelPicker({Key? key, required this.items}) : super(key: key);
+  const WheelPicker({Key? key, required this.items})
+      : buildChild = null,
+        super(key: key);
 
-  Widget buildChild(T item) => Text(item.toString());
+  const WheelPicker.builder(
+      {Key? key, required this.items, required this.buildChild})
+      : super(key: key);
 
-  List<Widget> _buildChildren() => items.map(buildChild).toList();
+  Widget _buildChildDefault(T item) => Text(item.toString());
+
+  List<Widget> _buildChildren() =>
+      items.map(buildChild ?? _buildChildDefault).toList();
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -214,7 +217,7 @@ class WheelPicker<T> extends StatelessWidget {
       );
 }
 
-class NumberPicker extends WheelPicker {
+class NumberPicker extends WheelPicker<int> {
   final int min;
   final int max;
   final int step;
@@ -231,4 +234,53 @@ class NumberPicker extends WheelPicker {
 
   NumberPicker({Key? key, required this.min, required this.max, this.step = 1})
       : super(key: key, items: _createItems(min, max, step));
+
+  NumberPicker.builder(
+      {Key? key,
+      required this.min,
+      required this.max,
+      required this.step,
+      required Widget Function(int) buildChild})
+      : super.builder(
+            key: key,
+            items: _createItems(min, max, step),
+            buildChild: buildChild);
+}
+
+class DurationPicker extends StatelessWidget {
+  const DurationPicker({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          Expanded(
+              child: NumberPicker.builder(
+            min: 0,
+            max: 12,
+            step: 1,
+            buildChild: (number) => Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  number.toString(),
+                )),
+          )),
+          const SizedBox(
+              width: 30,
+              child: Text(
+                ":",
+                textAlign: TextAlign.center,
+              )),
+          Expanded(
+              child: NumberPicker.builder(
+            min: 0,
+            max: 60,
+            step: 5,
+            buildChild: (number) => Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  number.toString(),
+                )),
+          )),
+        ],
+      );
 }
