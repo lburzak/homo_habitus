@@ -213,8 +213,6 @@ class WheelPicker<T> extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemExtent: 30,
         children: _buildChildren(),
-        // useMagnifier: true,
-        magnification: 1.3,
         overAndUnderCenterOpacity: 0.5,
       );
 }
