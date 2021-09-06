@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
 import 'package:homo_habitus/widget/round_button.dart';
@@ -8,7 +9,7 @@ import 'package:homo_habitus/widget/round_button.dart';
 class CreateHabitPage extends StatelessWidget {
   CreateHabitPage({Key? key}) : super(key: key);
 
-  final _goalOptionController = OptionController();
+  final _goalOptionController = OptionController(initialIndex: 1);
   final _habitNameController = TextEditingController();
 
   @override
@@ -97,13 +98,22 @@ class CreateHabitPage extends StatelessWidget {
                                           ),
                                           Expanded(
                                             child: Padding(
-                                              padding: const EdgeInsets.all(16.0),
-                                              child: RoundButton(icon: Icons.add, onPressed: () {},),
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
+                                              child: RoundButton(
+                                                icon: Icons.add,
+                                                onPressed: () {},
+                                              ),
                                             ),
                                           )
                                         ],
                                       )
-                                    : Text("for 30 minutes"))
+                                    : Row(
+                                      children: [
+                                        Expanded(child: NumberPicker(min: 0, max: 12, step: 1)),
+                                        Expanded(child: NumberPicker(min: 0, max: 60, step: 5)),
+                                      ],
+                                    ))
                           ],
                         ),
                       )),
@@ -181,4 +191,44 @@ class IconSelection extends StatelessWidget {
           )),
     );
   }
+}
+
+class WheelPicker<T> extends StatelessWidget {
+  final List<T> items;
+
+  const WheelPicker({Key? key, required this.items}) : super(key: key);
+
+  Widget buildChild(T item) => Text(item.toString());
+
+  List<Widget> _buildChildren() => items.map(buildChild).toList();
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        height: 120,
+        child: ListWheelScrollView(
+          itemExtent: 30,
+          children: _buildChildren(),
+          useMagnifier: false,
+          overAndUnderCenterOpacity: 0.5,
+        ),
+      );
+}
+
+class NumberPicker extends WheelPicker {
+  final int min;
+  final int max;
+  final int step;
+
+  static List<int> _createItems(int min, int max, int step) {
+    List<int> items = [];
+
+    for (int i = min; i <= max; i += step) {
+      items.add(i);
+    }
+
+    return items;
+  }
+
+  NumberPicker({Key? key, required this.min, required this.max, this.step = 1})
+      : super(key: key, items: _createItems(min, max, step));
 }
