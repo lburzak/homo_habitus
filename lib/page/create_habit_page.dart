@@ -110,7 +110,7 @@ class CreateHabitPage extends StatelessWidget {
                                       )
                                     : const Padding(
                                         padding: EdgeInsets.all(8.0),
-                                        child: DurationPicker(),
+                                        child: SizedBox(height: 120, child: DurationPicker()),
                                       ))
                           ],
                         ),
@@ -251,34 +251,31 @@ class DurationPicker extends StatelessWidget {
   const DurationPicker({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 80,
-        child: Row(
-          children: [
-            Expanded(
-                child: Column(
-              children: const [
-                PickerLabel("hours"),
-                Expanded(
-                  child: HoursPicker(),
-                ),
-              ],
-            )),
-            const SizedBox(
-                width: 30,
-                child: PickerSeparator()),
-            Expanded(
-                child: Column(
-              children: const [
-                PickerLabel("minutes"),
-                Expanded(
-                  child: MinutesPicker(),
-                ),
-              ],
-            )),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) => Row(
+    children: [
+      Expanded(
+          child: Column(
+        children: const [
+          PickerLabel("hours"),
+          Expanded(
+            child: HoursPicker(),
+          ),
+        ],
+      )),
+      const SizedBox(
+          width: 30,
+          child: PickerSeparator()),
+      Expanded(
+          child: Column(
+        children: const [
+          PickerLabel("minutes"),
+          Expanded(
+            child: MinutesPicker(),
+          ),
+        ],
+      )),
+    ],
+  );
 }
 
 class MinutesPicker extends StatelessWidget {
