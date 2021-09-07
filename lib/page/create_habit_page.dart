@@ -119,6 +119,10 @@ class CreateHabitView extends StatelessWidget {
                   ),
                 ),
               )),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
+          child: SizedBox(height: 48, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.add), label: const SizedBox.shrink())),
         )
       ],
     );

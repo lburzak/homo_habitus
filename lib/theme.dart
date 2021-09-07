@@ -3,11 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 final themeData = ThemeData(
   colorScheme: _colorScheme,
-  iconTheme: const IconThemeData(color: Color(0xffBEBEBE)),
-  floatingActionButtonTheme: _fabTheme,
-  appBarTheme: _appBarTheme,
-  textTheme: _textTheme,
-);
+    iconTheme: const IconThemeData(color: Color(0xffBEBEBE)),
+    floatingActionButtonTheme: _fabTheme,
+    appBarTheme: _appBarTheme,
+    textTheme: _textTheme,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)))));
 
 const _colorScheme = ColorScheme.dark(
     onBackground: Color(0xff393939),
