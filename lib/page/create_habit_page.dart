@@ -225,10 +225,33 @@ class TimerSetupView extends StatelessWidget {
   }
 }
 
-class CounterSetupView extends StatelessWidget {
+class CounterSetupView extends StatefulWidget {
   const CounterSetupView({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<CounterSetupView> createState() => _CounterSetupViewState();
+}
+
+class _CounterSetupViewState extends State<CounterSetupView> {
+  int _selectedValue = 0;
+
+  void _increment() {
+    setState(() {
+      _selectedValue++;
+    });
+  }
+
+  void _decrement() {
+    setState(() {
+      _selectedValue--;
+    });
+  }
+
+  bool _canIncrement() => _selectedValue < 99;
+
+  bool _canDecrement() => _selectedValue > 0;
 
   @override
   Widget build(BuildContext context) {
@@ -240,7 +263,7 @@ class CounterSetupView extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: RoundButton(
               icon: Icons.remove,
-              onPressed: () {},
+              onPressed: _canDecrement() ? _decrement : null,
             ),
           ),
         ),
@@ -248,7 +271,8 @@ class CounterSetupView extends StatelessWidget {
           child: Column(
             children: [
               TextField(
-                controller: TextEditingController(text: "0"),
+                controller:
+                    TextEditingController(text: _selectedValue.toString()),
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 decoration: const InputDecoration(
@@ -264,7 +288,7 @@ class CounterSetupView extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: RoundButton(
               icon: Icons.add,
-              onPressed: () {},
+              onPressed: _canIncrement() ? _increment : null,
             ),
           ),
         )
