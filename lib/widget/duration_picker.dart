@@ -2,17 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:homo_habitus/widget/wheel_picker.dart';
 
 class DurationPicker extends StatelessWidget {
-  const DurationPicker({Key? key}) : super(key: key);
+  final DurationPickerController _durationPickerController;
+
+  DurationPicker({Key? key, DurationPickerController? durationPickerController})
+      : _durationPickerController =
+            durationPickerController ?? DurationPickerController(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) => Row(
-    children: [
-      Expanded(
-          child: Column(
-            children: const [
-              PickerLabel("hours"),
+        children: [
+          Expanded(
+              child: Column(
+            children: [
+              const PickerLabel("hours"),
               Expanded(
-                child: HoursPicker(),
+                child: HoursPicker(
+                  onSelectedItemChanged: (number) =>
+                      _durationPickerController.hours = number,
+                ),
               ),
             ],
           )),
@@ -21,20 +29,45 @@ class DurationPicker extends StatelessWidget {
           child: PickerSeparator()),
       Expanded(
           child: Column(
-            children: const [
-              PickerLabel("minutes"),
+            children: [
+              const PickerLabel("minutes"),
               Expanded(
-                child: MinutesPicker(),
+                child: MinutesPicker(
+                  onSelectedItemChanged: (number) =>
+                      _durationPickerController.minutes = number,
+                ),
               ),
             ],
           )),
-    ],
-  );
+        ],
+      );
+}
+
+class DurationPickerController extends ChangeNotifier {
+  int _hours = 0;
+  int _minutes = 0;
+
+  int get hours => _hours;
+
+  set hours(int hours) {
+    _hours = hours;
+    notifyListeners();
+  }
+
+  int get minutes => _minutes;
+
+  set minutes(int minutes) {
+    _minutes = minutes;
+    notifyListeners();
+  }
 }
 
 class MinutesPicker extends StatelessWidget {
+  final void Function(int)? onSelectedItemChanged;
+
   const MinutesPicker({
     Key? key,
+    this.onSelectedItemChanged,
   }) : super(key: key);
 
   @override
@@ -43,16 +76,17 @@ class MinutesPicker extends StatelessWidget {
       min: 0,
       max: 60,
       step: 5,
-      buildChild: (number) => Text(number.toString(),
-          style: Theme.of(context).textTheme.subtitle1),
+      onSelectedItemChanged: onSelectedItemChanged,
+      buildChild: (number) =>
+          Text(number.toString(), style: Theme.of(context).textTheme.subtitle1),
     );
   }
 }
 
 class HoursPicker extends StatelessWidget {
-  const HoursPicker({
-    Key? key,
-  }) : super(key: key);
+  final void Function(int)? onSelectedItemChanged;
+
+  const HoursPicker({Key? key, this.onSelectedItemChanged}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +94,9 @@ class HoursPicker extends StatelessWidget {
       min: 0,
       max: 12,
       step: 1,
-      buildChild: (number) => Text(number.toString(),
-          style: Theme.of(context).textTheme.subtitle1),
+      onSelectedItemChanged: onSelectedItemChanged,
+      buildChild: (number) =>
+          Text(number.toString(), style: Theme.of(context).textTheme.subtitle1),
     );
   }
 }

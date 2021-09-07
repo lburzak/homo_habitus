@@ -146,8 +146,8 @@ class TimerSetupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(8.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: SizedBox(height: 120, child: DurationPicker()),
     );
   }
