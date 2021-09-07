@@ -22,124 +22,183 @@ class CreateHabitPage extends StatelessWidget {
           child: Center(
             child: FractionallySizedBox(
               widthFactor: 0.8,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      const IconSelection(),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: SizedBox(
-                            height: 32,
-                            child: TextField(
-                              controller: _habitNameController,
-                              textAlign: TextAlign.center,
-                              decoration: const InputDecoration.collapsed(
-                                  hintText: "Name"),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  FormSection("Goal",
-                      child: Material(
-                        clipBehavior: Clip.hardEdge,
-                        borderRadius: BorderRadius.circular(12),
-                        color: Theme.of(context).colorScheme.onBackground,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 48,
-                              child: OptionSelector(
-                                controller: _goalOptionController,
-                                options: [
-                                  Option("Counter",
-                                      leading: const Icon(
-                                        Icons.tag,
-                                        size: 16,
-                                      )),
-                                  Option("Timer",
-                                      leading: const Icon(
-                                        Icons.timer,
-                                        size: 16,
-                                      ))
-                                ],
-                              ),
-                            ),
-                            ValueListenableBuilder<int>(
-                                valueListenable: _goalOptionController.selectedIndex,
-                                builder: (context, value, child) =>
-                                value == 0
-                                    ? Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(16.0),
-                                              child: RoundButton(icon: Icons.remove, onPressed: () {},),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              children: [
-                                                TextField(
-                                                  controller: TextEditingController(text: "0"),
-                                                  keyboardType: TextInputType.number,
-                                                  textAlign: TextAlign.center,
-                                                  decoration: const InputDecoration(
-                                                    border: InputBorder.none,
-                                                    suffixText: "times",
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: RoundButton(
-                                                icon: Icons.add,
-                                                onPressed: () {},
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    : const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: SizedBox(height: 120, child: DurationPicker()),
-                                      ))
-                          ],
-                        ),
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: FormSection("Repetition",
-                        child: Material(
-                          borderRadius: BorderRadius.circular(12),
-                          clipBehavior: Clip.hardEdge,
-                          child: SizedBox(
-                            height: 48,
-                            child: OptionSelector(
-                              options: [
-                                Option("Daily"),
-                                Option("Weekly"),
-                                Option("Monthly")
-                              ],
-                            ),
-                          ),
-                        )),
-                  )
-                ],
-              ),
+              child: CreateHabitView(
+                  habitNameController: _habitNameController,
+                  goalOptionController: _goalOptionController),
             ),
           ),
         ),
       );
+}
+
+class CreateHabitView extends StatelessWidget {
+  const CreateHabitView({
+    Key? key,
+    required TextEditingController habitNameController,
+    required OptionController goalOptionController,
+  })  : _habitNameController = habitNameController,
+        _goalOptionController = goalOptionController,
+        super(key: key);
+
+  final TextEditingController _habitNameController;
+  final OptionController _goalOptionController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const IconSelector(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SizedBox(
+                  height: 32,
+                  child: TextField(
+                    controller: _habitNameController,
+                    textAlign: TextAlign.center,
+                    decoration:
+                        const InputDecoration.collapsed(hintText: "Name"),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        FormSection("Goal",
+            child: Material(
+              clipBehavior: Clip.hardEdge,
+              borderRadius: BorderRadius.circular(12),
+              color: Theme.of(context).colorScheme.onBackground,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 48,
+                    child: GoalTypeSelector(
+                        goalOptionController: _goalOptionController),
+                  ),
+                  ValueListenableBuilder<int>(
+                      valueListenable: _goalOptionController.selectedIndex,
+                      builder: (context, value, child) => value == 0
+                          ? const CounterSetupView()
+                          : const TimerSetupView())
+                ],
+              ),
+            )),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: FormSection("Repetition",
+              child: Material(
+                borderRadius: BorderRadius.circular(12),
+                clipBehavior: Clip.hardEdge,
+                child: SizedBox(
+                  height: 48,
+                  child: OptionSelector(
+                    options: [
+                      Option("Daily"),
+                      Option("Weekly"),
+                      Option("Monthly")
+                    ],
+                  ),
+                ),
+              )),
+        )
+      ],
+    );
+  }
+}
+
+class GoalTypeSelector extends StatelessWidget {
+  const GoalTypeSelector({
+    Key? key,
+    required OptionController goalOptionController,
+  })  : _goalOptionController = goalOptionController,
+        super(key: key);
+
+  final OptionController _goalOptionController;
+
+  @override
+  Widget build(BuildContext context) {
+    return OptionSelector(
+      controller: _goalOptionController,
+      options: [
+        Option("Counter",
+            leading: const Icon(
+              Icons.tag,
+              size: 16,
+            )),
+        Option("Timer",
+            leading: const Icon(
+              Icons.timer,
+              size: 16,
+            ))
+      ],
+    );
+  }
+}
+
+class TimerSetupView extends StatelessWidget {
+  const TimerSetupView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: SizedBox(height: 120, child: DurationPicker()),
+    );
+  }
+}
+
+class CounterSetupView extends StatelessWidget {
+  const CounterSetupView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: RoundButton(
+              icon: Icons.remove,
+              onPressed: () {},
+            ),
+          ),
+        ),
+        Expanded(
+          child: Column(
+            children: [
+              TextField(
+                controller: TextEditingController(text: "0"),
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  suffixText: "times",
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: RoundButton(
+              icon: Icons.add,
+              onPressed: () {},
+            ),
+          ),
+        )
+      ],
+    );
+  }
 }
 
 class FormSection extends StatelessWidget {
@@ -170,8 +229,8 @@ class FormSection extends StatelessWidget {
   }
 }
 
-class IconSelection extends StatelessWidget {
-  const IconSelection({
+class IconSelector extends StatelessWidget {
+  const IconSelector({
     Key? key,
   }) : super(key: key);
 
