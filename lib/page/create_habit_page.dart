@@ -15,18 +15,27 @@ class CreateHabitPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('New habit'),
-        ),
-        body: SingleChildScrollView(
-          child: Center(
-            child: FractionallySizedBox(
-              widthFactor: 0.8,
-              child: CreateHabitView(
-                  habitNameController: _habitNameController,
-                  goalOptionController: _goalOptionController),
+        body: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('New habit'),
+              pinned: true,
+              elevation: 4,
+              collapsedHeight: 80,
+              toolbarHeight: 80,
             ),
-          ),
+            SliverList(
+                delegate: SliverChildListDelegate.fixed([
+              Center(
+                child: FractionallySizedBox(
+                  widthFactor: 0.8,
+                  child: CreateHabitView(
+                      habitNameController: _habitNameController,
+                      goalOptionController: _goalOptionController),
+                ),
+              )
+            ]))
+          ],
         ),
       );
 }
@@ -48,25 +57,31 @@ class CreateHabitView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            const IconSelector(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SizedBox(
-                  height: 32,
-                  child: TextField(
-                    controller: _habitNameController,
-                    textAlign: TextAlign.center,
-                    decoration:
-                        const InputDecoration.collapsed(hintText: "Name"),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        FormSection("Habit",
+            child: SizedBox(
+              height: 60,
+              child: Material(
+                  clipBehavior: Clip.hardEdge,
+                  borderRadius: BorderRadius.circular(12),
+                  color: Theme.of(context).colorScheme.onBackground,
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    fit: StackFit.passthrough,
+                      children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: TextField(
+                          controller: _habitNameController,
+                          textAlign: TextAlign.center,
+                          decoration: const InputDecoration.collapsed(
+                              hintText: "Your habit..."),
+                        ),
+                      ),
+                    ),
+                    const FractionallySizedBox(widthFactor: 0.2, child: IconSelector()),
+                  ])),
+            )),
         FormSection("Goal",
             child: Material(
               clipBehavior: Clip.hardEdge,
@@ -236,17 +251,15 @@ class IconSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: 64,
-      child: Ink(
-          decoration: ShapeDecoration(
-              color: Theme.of(context).colorScheme.onBackground,
-              shape: const CircleBorder()),
+    return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {},
           child: const FractionallySizedBox(
             heightFactor: 0.5,
             widthFactor: 0.5,
             child: Icon(Icons.extension),
-          )),
-    );
+          ),
+        ));
   }
 }
