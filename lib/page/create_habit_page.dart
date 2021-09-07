@@ -3,15 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:homo_habitus/model/goal.dart';
+import 'package:homo_habitus/model/habit.dart';
+import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
 import 'package:homo_habitus/widget/round_button.dart';
 
 class CreateHabitPage extends StatelessWidget {
   CreateHabitPage({Key? key}) : super(key: key);
-
-  final _goalOptionController = OptionController(initialIndex: 1);
-  final _habitNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -29,9 +29,7 @@ class CreateHabitPage extends StatelessWidget {
               Center(
                 child: FractionallySizedBox(
                   widthFactor: 0.8,
-                  child: CreateHabitView(
-                      habitNameController: _habitNameController,
-                      goalOptionController: _goalOptionController),
+                  child: CreateHabitView(),
                 ),
               )
             ]))
@@ -41,16 +39,11 @@ class CreateHabitPage extends StatelessWidget {
 }
 
 class CreateHabitView extends StatelessWidget {
-  const CreateHabitView({
-    Key? key,
-    required TextEditingController habitNameController,
-    required OptionController goalOptionController,
-  })  : _habitNameController = habitNameController,
-        _goalOptionController = goalOptionController,
-        super(key: key);
+  final _goalOptionController = OptionController();
+  final _timeframeOptionController = OptionController();
+  final _habitNameController = TextEditingController();
 
-  final TextEditingController _habitNameController;
-  final OptionController _goalOptionController;
+  CreateHabitView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -111,6 +104,7 @@ class CreateHabitView extends StatelessWidget {
                 child: SizedBox(
                   height: 48,
                   child: OptionSelector(
+                    controller: _timeframeOptionController,
                     options: [
                       Option("Daily"),
                       Option("Weekly"),
@@ -122,10 +116,69 @@ class CreateHabitView extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
-          child: SizedBox(height: 48, child: ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.add), label: const SizedBox.shrink())),
+          child: SizedBox(height: 48, child: ElevatedButton.icon(onPressed: _submit, icon: const Icon(Icons.add), label: const SizedBox.shrink())),
         )
       ],
     );
+  }
+
+
+
+  GoalType get _selectedGoalType {
+    final tabIndex = _goalOptionController.selectedIndex.value;
+    switch (tabIndex) {
+      case 0:
+        return GoalType.counter;
+      case 1:
+        return GoalType.timer;
+      default:
+        return throw Exception("Unexpected goal type index [$tabIndex]");
+    }
+  }
+
+  Timeframe get _selectedTimeframe {
+    final tabIndex = _timeframeOptionController.selectedIndex.value;
+    switch (tabIndex) {
+      case 0:
+        return Timeframe.day;
+      case 1:
+        return Timeframe.week;
+      case 2:
+        return Timeframe.month;
+      default:
+        return throw Exception("Unexpected timeframe index [$tabIndex]");
+    }
+  }
+
+  int get _selectedTargetProgress {
+    // TODO: Implement
+    final tabIndex = _goalOptionController.selectedIndex.value;
+    switch (tabIndex) {
+      case 0:
+        return 0;
+      case 1:
+        return 0;
+      default:
+        return throw Exception("Unexpected goal type index [$tabIndex]");
+    }
+  }
+
+  String get _selectedHabitName => _habitNameController.text;
+
+  void _submit() {
+    final habit = Habit(
+      id: 0,
+      iconName: "",
+      name: _selectedHabitName
+    );
+
+    final goal = Goal(
+      timeframe: _selectedTimeframe,
+      type: _selectedGoalType,
+      targetProgress: _selectedTargetProgress
+    );
+
+    print("Saving habit $habit with goal $goal");
   }
 }
 

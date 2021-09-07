@@ -6,6 +6,11 @@ class Goal {
   Timeframe timeframe;
 
   Goal({required this.targetProgress, required this.type, required this.timeframe});
+
+  @override
+  String toString() {
+    return 'Goal{targetProgress: $targetProgress, type: $type, timeframe: $timeframe}';
+  }
 }
 
 enum GoalType {
