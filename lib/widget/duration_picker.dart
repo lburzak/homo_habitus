@@ -56,6 +56,11 @@ class DurationPickerController extends ChangeNotifier {
 
   int get minutes => _minutes;
 
+  Duration get duration => Duration(
+    hours: _hours,
+    minutes: _minutes
+  );
+
   set minutes(int minutes) {
     _minutes = minutes;
     notifyListeners();

@@ -43,6 +43,7 @@ class CreateHabitView extends StatelessWidget {
   final _timeframeOptionController = OptionController();
   final _habitNameController = TextEditingController();
   final _counterEditingController = TextEditingController(text: "0");
+  final _durationPickerController = DurationPickerController();
 
   CreateHabitView({Key? key}) : super(key: key);
 
@@ -90,13 +91,15 @@ class CreateHabitView extends StatelessWidget {
                   ),
                   ValueListenableBuilder<int>(
                       valueListenable: _goalOptionController.selectedIndex,
-                      builder: (context, value, child) =>
-                      value == 0
+                      builder: (context, value, child) => value == 0
                           ? CounterSetupView(
                               counterEditingController:
                                   _counterEditingController,
                             )
-                          : const TimerSetupView())
+                          : TimerSetupView(
+                              durationPickerController:
+                                  _durationPickerController,
+                            ))
                 ],
               ),
             )),
@@ -156,13 +159,12 @@ class CreateHabitView extends StatelessWidget {
   }
 
   int get _selectedTargetProgress {
-    // TODO: Implement
     final tabIndex = _goalOptionController.selectedIndex.value;
     switch (tabIndex) {
       case 0:
-        return 0;
+        return int.parse(_counterEditingController.text);
       case 1:
-        return 0;
+        return _durationPickerController.duration.inMilliseconds;
       default:
         return throw Exception("Unexpected goal type index [$tabIndex]");
     }
@@ -217,15 +219,21 @@ class GoalTypeSelector extends StatelessWidget {
 }
 
 class TimerSetupView extends StatelessWidget {
-  const TimerSetupView({
-    Key? key,
-  }) : super(key: key);
+  final DurationPickerController _controller;
+
+  TimerSetupView({Key? key, DurationPickerController? durationPickerController})
+      : _controller = durationPickerController ?? DurationPickerController(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: SizedBox(height: 120, child: DurationPicker()),
+      child: SizedBox(
+          height: 120,
+          child: DurationPicker(
+            controller: _controller,
+          )),
     );
   }
 }
