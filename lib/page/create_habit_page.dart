@@ -236,22 +236,53 @@ class CounterSetupView extends StatefulWidget {
 
 class _CounterSetupViewState extends State<CounterSetupView> {
   int _selectedValue = 0;
+  final _counterEditingController = TextEditingController(text: "0");
 
   void _increment() {
     setState(() {
       _selectedValue++;
+      _updateVisibleValue();
     });
   }
 
   void _decrement() {
     setState(() {
       _selectedValue--;
+      _updateVisibleValue();
     });
   }
 
   bool _canIncrement() => _selectedValue < 99;
 
   bool _canDecrement() => _selectedValue > 0;
+
+  int _normalizeCounterValue(int value) {
+    if (value < 0) {
+      return 0;
+    } else if (value > 99) {
+      return 99;
+    } else {
+      return value;
+    }
+  }
+
+  void _onValueManuallyEntered(String input) {
+    if (input.isEmpty) {
+      return;
+    }
+
+    final int parsedInput = int.parse(input);
+    setState(() {
+      _selectedValue = _normalizeCounterValue(parsedInput);
+      _updateVisibleValue();
+    });
+  }
+
+  void _updateVisibleValue() {
+    final text = _selectedValue.toString();
+    _counterEditingController.value = TextEditingValue(
+        text: text, selection: TextSelection.collapsed(offset: text.length));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,8 +302,12 @@ class _CounterSetupViewState extends State<CounterSetupView> {
           child: Column(
             children: [
               TextField(
-                controller:
-                    TextEditingController(text: _selectedValue.toString()),
+                controller: _counterEditingController,
+                onTap: () => _counterEditingController.selection =
+                    TextSelection(
+                        baseOffset: 0,
+                        extentOffset: _counterEditingController.text.length),
+                onChanged: _onValueManuallyEntered,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 decoration: const InputDecoration(
