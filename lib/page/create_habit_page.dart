@@ -42,6 +42,7 @@ class CreateHabitView extends StatelessWidget {
   final _goalOptionController = OptionController();
   final _timeframeOptionController = OptionController();
   final _habitNameController = TextEditingController();
+  final _counterEditingController = TextEditingController(text: "0");
 
   CreateHabitView({Key? key}) : super(key: key);
 
@@ -89,8 +90,12 @@ class CreateHabitView extends StatelessWidget {
                   ),
                   ValueListenableBuilder<int>(
                       valueListenable: _goalOptionController.selectedIndex,
-                      builder: (context, value, child) => value == 0
-                          ? const CounterSetupView()
+                      builder: (context, value, child) =>
+                      value == 0
+                          ? CounterSetupView(
+                              counterEditingController:
+                                  _counterEditingController,
+                            )
                           : const TimerSetupView())
                 ],
               ),
@@ -226,9 +231,14 @@ class TimerSetupView extends StatelessWidget {
 }
 
 class CounterSetupView extends StatefulWidget {
-  const CounterSetupView({
+  final TextEditingController _counterEditingController;
+
+  CounterSetupView({
     Key? key,
-  }) : super(key: key);
+    TextEditingController? counterEditingController,
+  })  : _counterEditingController =
+            counterEditingController ?? TextEditingController(text: "0"),
+        super(key: key);
 
   @override
   State<CounterSetupView> createState() => _CounterSetupViewState();
@@ -236,7 +246,6 @@ class CounterSetupView extends StatefulWidget {
 
 class _CounterSetupViewState extends State<CounterSetupView> {
   int _selectedValue = 0;
-  final _counterEditingController = TextEditingController(text: "0");
 
   void _increment() {
     setState(() {
@@ -280,7 +289,7 @@ class _CounterSetupViewState extends State<CounterSetupView> {
 
   void _updateVisibleValue() {
     final text = _selectedValue.toString();
-    _counterEditingController.value = TextEditingValue(
+    widget._counterEditingController.value = TextEditingValue(
         text: text, selection: TextSelection.collapsed(offset: text.length));
   }
 
@@ -302,11 +311,12 @@ class _CounterSetupViewState extends State<CounterSetupView> {
           child: Column(
             children: [
               TextField(
-                controller: _counterEditingController,
-                onTap: () => _counterEditingController.selection =
+                controller: widget._counterEditingController,
+                onTap: () => widget._counterEditingController.selection =
                     TextSelection(
                         baseOffset: 0,
-                        extentOffset: _counterEditingController.text.length),
+                        extentOffset:
+                            widget._counterEditingController.text.length),
                 onChanged: _onValueManuallyEntered,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
