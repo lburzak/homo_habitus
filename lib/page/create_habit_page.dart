@@ -1,31 +1,37 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
 import 'package:homo_habitus/widget/round_button.dart';
+import 'package:provider/provider.dart';
 
 class CreateHabitPage extends StatelessWidget {
   CreateHabitPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            const SliverAppBar(
-              title: Text('New habit'),
-              pinned: true,
-              elevation: 4,
-              collapsedHeight: 80,
-              toolbarHeight: 80,
-            ),
-            SliverList(
-                delegate: SliverChildListDelegate.fixed([
+    body: CustomScrollView(
+      slivers: [
+        const SliverAppBar(
+          title: Text('New habit'),
+          pinned: true,
+          elevation: 4,
+          collapsedHeight: 80,
+          toolbarHeight: 80,
+        ),
+        SliverList(
+            delegate: SliverChildListDelegate.fixed([
               Center(
                 child: FractionallySizedBox(
                   widthFactor: 0.8,
@@ -33,9 +39,9 @@ class CreateHabitPage extends StatelessWidget {
                 ),
               )
             ]))
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 }
 
 class CreateHabitView extends StatelessWidget {
@@ -60,22 +66,23 @@ class CreateHabitView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   color: Theme.of(context).colorScheme.onBackground,
                   child: Stack(
-                    alignment: Alignment.centerLeft,
-                    fit: StackFit.passthrough,
+                      alignment: Alignment.centerLeft,
+                      fit: StackFit.passthrough,
                       children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: TextField(
-                          controller: _habitNameController,
-                          textAlign: TextAlign.center,
-                          decoration: const InputDecoration.collapsed(
-                              hintText: "Your habit..."),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: TextField(
+                              controller: _habitNameController,
+                              textAlign: TextAlign.center,
+                              decoration: const InputDecoration.collapsed(
+                                  hintText: "Your habit..."),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const FractionallySizedBox(widthFactor: 0.2, child: IconSelector()),
-                  ])),
+                        const FractionallySizedBox(
+                            widthFactor: 0.2, child: IconSelector()),
+                      ])),
             )),
         FormSection("Goal",
             child: Material(
@@ -93,13 +100,13 @@ class CreateHabitView extends StatelessWidget {
                       valueListenable: _goalOptionController.selectedIndex,
                       builder: (context, value, child) => value == 0
                           ? CounterSetupView(
-                              counterEditingController:
-                                  _counterEditingController,
-                            )
+                        counterEditingController:
+                        _counterEditingController,
+                      )
                           : TimerSetupView(
-                              durationPickerController:
-                                  _durationPickerController,
-                            ))
+                        durationPickerController:
+                        _durationPickerController,
+                      ))
                 ],
               ),
             )),
@@ -129,7 +136,6 @@ class CreateHabitView extends StatelessWidget {
       ],
     );
   }
-
 
 
   GoalType get _selectedGoalType {
@@ -173,17 +179,12 @@ class CreateHabitView extends StatelessWidget {
   String get _selectedHabitName => _habitNameController.text;
 
   void _submit() {
-    final habit = Habit(
-      id: 0,
-      iconName: "",
-      name: _selectedHabitName
-    );
+    final habit = Habit(id: 0, iconName: "", name: _selectedHabitName);
 
     final goal = Goal(
-      timeframe: _selectedTimeframe,
-      type: _selectedGoalType,
-      targetProgress: _selectedTargetProgress
-    );
+        timeframe: _selectedTimeframe,
+        type: _selectedGoalType,
+        targetProgress: _selectedTargetProgress);
 
     print("Saving habit $habit with goal $goal");
   }
@@ -324,7 +325,7 @@ class _CounterSetupViewState extends State<CounterSetupView> {
                     TextSelection(
                         baseOffset: 0,
                         extentOffset:
-                            widget._counterEditingController.text.length),
+                        widget._counterEditingController.text.length),
                 onChanged: _onValueManuallyEntered,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
@@ -388,7 +389,7 @@ class IconSelector extends StatelessWidget {
     return Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: () => _showIconSelectionDialog(context),
           child: const FractionallySizedBox(
             heightFactor: 0.5,
             widthFactor: 0.5,
@@ -396,4 +397,91 @@ class IconSelector extends StatelessWidget {
           ),
         ));
   }
+
+  void _showIconSelectionDialog(BuildContext context) {
+    showModalBottomSheet(
+        context: context, builder: (context) => const IconSelectionGrid());
+  }
+}
+
+class IconSelectionGrid extends StatelessWidget {
+  const IconSelectionGrid({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider<IconRepository>(
+      create: (context) => IconRepository(),
+      builder: (context, child) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text("Choose icon", style: Theme.of(context).textTheme.subtitle1),
+          ),
+          Expanded(
+            child: FutureBuilder<List<String>>(
+              future: context.read<IconRepository>().readIconNames(),
+              builder: (context, snapshot) => snapshot.hasData
+                  ? GridView.builder(
+                      itemCount: snapshot.data!.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4),
+                      itemBuilder: (context, index) => IconSelectionTile(snapshot.data![index]),
+                    )
+                  : const Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class IconSelectionTile extends StatelessWidget {
+  final String assetName;
+
+  const IconSelectionTile(this.assetName, {
+    Key? key
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {} ,
+      child: FractionallySizedBox(
+        widthFactor: 0.6,
+        heightFactor: 0.6,
+        child: SvgPicture.asset(
+          assetName,
+          color: Theme.of(context).iconTheme.color,
+        ),
+      ),
+    );
+  }
+}
+
+class IconRepository {
+  static const String _assetManifest = "AssetManifest.json";
+  bool _isLoaded = false;
+  List<String> _icons = List.empty();
+
+  Future<List<String>> readIconNames() async {
+    if (!_isLoaded) {
+      await _loadIconAssets();
+      _isLoaded = true;
+    }
+
+    return _icons;
+  }
+
+  Future _loadIconAssets() async {
+    final manifestContent = await _readManifest();
+    final Map<String, dynamic> jsonManifest = json.decode(manifestContent);
+
+    _icons =
+        jsonManifest.keys.where((String key) => key.contains('.svg')).toList();
+  }
+
+  Future<String> _readManifest() async =>
+      await rootBundle.loadString(_assetManifest);
 }
