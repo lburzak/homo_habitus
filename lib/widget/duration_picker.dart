@@ -4,9 +4,9 @@ import 'package:homo_habitus/widget/wheel_picker.dart';
 class DurationPicker extends StatelessWidget {
   final DurationPickerController _durationPickerController;
 
-  DurationPicker({Key? key, DurationPickerController? durationPickerController})
+  DurationPicker({Key? key, DurationPickerController? controller})
       : _durationPickerController =
-            durationPickerController ?? DurationPickerController(),
+            controller ?? DurationPickerController(),
         super(key: key);
 
   @override
