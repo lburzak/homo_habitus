@@ -485,8 +485,10 @@ class IconRepository {
     final manifestContent = await _readManifest();
     final Map<String, dynamic> jsonManifest = json.decode(manifestContent);
 
-    _icons =
-        jsonManifest.keys.where((String key) => key.contains('.svg')).toList();
+    _icons = jsonManifest.keys
+        .where((key) => key.startsWith("assets/icons"))
+        .where((key) => key.endsWith('.svg'))
+        .toList();
   }
 
   Future<String> _readManifest() async =>
