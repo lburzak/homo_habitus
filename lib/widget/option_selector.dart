@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:homo_habitus/util/extensions.dart';
 
-class OptionSelector extends StatelessWidget {
+class OptionSelector<T> extends StatelessWidget {
   OptionSelector(
       {Key? key, required this.options, OptionController? controller, this.onChange})
       : super(key: key) {
     _controller = controller ?? OptionController();
   }
 
-  final List<Option> options;
-  final void Function(dynamic)? onChange;
+  final List<Option<T>> options;
+  final void Function(T)? onChange;
   late final OptionController _controller;
 
   @override

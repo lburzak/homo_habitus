@@ -98,15 +98,18 @@ class CreateHabitView extends StatelessWidget {
                     child: GoalTypeSelector(
                         goalOptionController: _goalOptionController),
                   ),
-                  ValueListenableBuilder<int>(
-                      valueListenable: _goalOptionController.selectedIndex,
-                      builder: (context, value, child) => value == 0
-                          ? CounterSetupView(
-                        counterEditingController:
-                        _counterEditingController,
-                      )
-                          : TimerSetupView(
-                      ))
+                  BlocBuilder<HabitCreatorBloc, HabitCreatorState>(
+                      builder: (context, state) {
+                        switch (state.goalType) {
+                          case GoalType.counter:
+                            return CounterSetupView(
+                              counterEditingController:
+                              _counterEditingController,
+                            );
+                          case GoalType.timer:
+                            return const TimerSetupView();
+                        }
+                      })
                 ],
               ),
             )),
@@ -192,22 +195,23 @@ class GoalTypeSelector extends StatelessWidget {
   const GoalTypeSelector({
     Key? key,
     required OptionController goalOptionController,
-  })  : _goalOptionController = goalOptionController,
-        super(key: key);
-
-  final OptionController _goalOptionController;
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return OptionSelector(
-      controller: _goalOptionController,
+    return OptionSelector<GoalType>(
+      onChange: (GoalType goalType) => context
+          .read<HabitCreatorBloc>()
+          .add(HabitCreatorGoalChanged(goalType)),
       options: [
-        Option("Counter",
+        Option<GoalType>(GoalType.counter,
+            label: "Counter",
             leading: const Icon(
               Icons.tag,
               size: 16,
             )),
-        Option("Timer",
+        Option<GoalType>(GoalType.timer,
+            label: "Timer",
             leading: const Icon(
               Icons.timer,
               size: 16,
