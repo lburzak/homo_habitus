@@ -426,6 +426,7 @@ class IconSelectionGrid extends StatelessWidget {
               builder: (context, snapshot) => snapshot.hasData
                   ? GridView.builder(
                 itemCount: snapshot.data!.length,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 4),
