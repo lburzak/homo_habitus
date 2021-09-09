@@ -400,12 +400,14 @@ class IconSelector extends StatelessWidget {
 
   void _showIconSelectionDialog(BuildContext context) {
     showModalBottomSheet(
-        context: context, builder: (context) => const IconSelectionGrid());
+        context: context, builder: (context) => IconSelectionGrid(onIconSelected: (icon) => print(icon),));
   }
 }
 
 class IconSelectionGrid extends StatelessWidget {
-  const IconSelectionGrid({Key? key}) : super(key: key);
+  final void Function(String)? onIconSelected;
+
+  const IconSelectionGrid({Key? key, this.onIconSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -423,10 +425,15 @@ class IconSelectionGrid extends StatelessWidget {
               future: context.read<IconRepository>().readIconNames(),
               builder: (context, snapshot) => snapshot.hasData
                   ? GridView.builder(
-                      itemCount: snapshot.data!.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4),
-                      itemBuilder: (context, index) => IconSelectionTile(snapshot.data![index]),
+                itemCount: snapshot.data!.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4),
+                      itemBuilder: (context, index) =>
+                          IconSelectionTile(snapshot.data![index], onTap: () {
+                        onIconSelected!(snapshot.data![index]);
+                        Navigator.pop(context);
+                      }),
                     )
                   : const Center(child: CircularProgressIndicator()),
             ),
@@ -439,15 +446,15 @@ class IconSelectionGrid extends StatelessWidget {
 
 class IconSelectionTile extends StatelessWidget {
   final String assetName;
+  final void Function()? onTap;
 
-  const IconSelectionTile(this.assetName, {
-    Key? key
-  }) : super(key: key);
+  const IconSelectionTile(this.assetName, {Key? key, this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {} ,
+      onTap: onTap,
       child: FractionallySizedBox(
         widthFactor: 0.6,
         heightFactor: 0.6,
