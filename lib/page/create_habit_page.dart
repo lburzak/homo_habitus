@@ -106,7 +106,9 @@ class CreateHabitView extends StatelessWidget {
                           case GoalType.timer:
                             return const TimerSetupView();
                         }
-                      })
+                      },
+                      buildWhen: (previous, current) =>
+                          previous.goalType != current.goalType)
                 ],
               ),
             )),
@@ -245,7 +247,7 @@ class TimerSetupView extends StatelessWidget {
 
 class CounterSetupView extends StatelessWidget {
   final TextEditingController _counterEditingController =
-      TextEditingController(text: "1");
+      TextEditingController(text: "0");
 
   CounterSetupView({Key? key}) : super(key: key);
 
