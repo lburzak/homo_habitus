@@ -42,7 +42,7 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
           targetCount: state.targetCount - 1
         );
       }
-    } else if (event is HabitCreatorCounterDecremented) {
+    } else if (event is HabitCreatorCounterIncremented) {
       if (state.targetCount < 99) {
         yield state.copyWith(targetCount: state.targetCount + 1);
       }

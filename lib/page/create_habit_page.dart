@@ -102,10 +102,7 @@ class CreateHabitView extends StatelessWidget {
                       builder: (context, state) {
                         switch (state.goalType) {
                           case GoalType.counter:
-                            return CounterSetupView(
-                              counterEditingController:
-                              _counterEditingController,
-                            );
+                            return CounterSetupView();
                           case GoalType.timer:
                             return const TimerSetupView();
                         }
@@ -246,68 +243,11 @@ class TimerSetupView extends StatelessWidget {
   }
 }
 
-class CounterSetupView extends StatefulWidget {
-  final TextEditingController _counterEditingController;
+class CounterSetupView extends StatelessWidget {
+  final TextEditingController _counterEditingController =
+      TextEditingController(text: "1");
 
-  CounterSetupView({
-    Key? key,
-    TextEditingController? counterEditingController,
-  })  : _counterEditingController =
-            counterEditingController ?? TextEditingController(text: "0"),
-        super(key: key);
-
-  @override
-  State<CounterSetupView> createState() => _CounterSetupViewState();
-}
-
-class _CounterSetupViewState extends State<CounterSetupView> {
-  int _selectedValue = 0;
-
-  void _increment() {
-    setState(() {
-      _selectedValue++;
-      _updateVisibleValue();
-    });
-  }
-
-  void _decrement() {
-    setState(() {
-      _selectedValue--;
-      _updateVisibleValue();
-    });
-  }
-
-  bool _canIncrement() => _selectedValue < 99;
-
-  bool _canDecrement() => _selectedValue > 0;
-
-  int _normalizeCounterValue(int value) {
-    if (value < 0) {
-      return 0;
-    } else if (value > 99) {
-      return 99;
-    } else {
-      return value;
-    }
-  }
-
-  void _onValueManuallyEntered(String input) {
-    if (input.isEmpty) {
-      return;
-    }
-
-    final int parsedInput = int.parse(input);
-    setState(() {
-      _selectedValue = _normalizeCounterValue(parsedInput);
-      _updateVisibleValue();
-    });
-  }
-
-  void _updateVisibleValue() {
-    final text = _selectedValue.toString();
-    widget._counterEditingController.value = TextEditingValue(
-        text: text, selection: TextSelection.collapsed(offset: text.length));
-  }
+  CounterSetupView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -319,26 +259,30 @@ class _CounterSetupViewState extends State<CounterSetupView> {
             padding: const EdgeInsets.all(16.0),
             child: RoundButton(
               icon: Icons.remove,
-              onPressed: _canDecrement() ? _decrement : null,
+              onPressed: () => context
+                  .read<HabitCreatorBloc>()
+                  .add(HabitCreatorCounterDecremented()),
             ),
           ),
         ),
         Expanded(
           child: Column(
             children: [
-              TextField(
-                controller: widget._counterEditingController,
-                onTap: () => widget._counterEditingController.selection =
-                    TextSelection(
-                        baseOffset: 0,
-                        extentOffset:
-                        widget._counterEditingController.text.length),
-                onChanged: _onValueManuallyEntered,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  suffixText: "times",
+              BlocListener<HabitCreatorBloc, HabitCreatorState>(
+                listener: (context, state) {
+                  print(state);
+                  _updateVisibleValue(state.targetCount);
+                },
+                child: TextField(
+                  controller: _counterEditingController,
+                  onTap: _selectAll,
+                  onChanged: (text) => _onValueManuallyEntered(context, text),
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    suffixText: "times",
+                  ),
                 ),
               ),
             ],
@@ -349,12 +293,37 @@ class _CounterSetupViewState extends State<CounterSetupView> {
             padding: const EdgeInsets.all(16.0),
             child: RoundButton(
               icon: Icons.add,
-              onPressed: _canIncrement() ? _increment : null,
+              onPressed: () => context
+                  .read<HabitCreatorBloc>()
+                  .add(HabitCreatorCounterIncremented()),
             ),
           ),
         )
       ],
     );
+  }
+
+  void _selectAll() {
+    _counterEditingController.selection = TextSelection(
+        baseOffset: 0, extentOffset: _counterEditingController.text.length);
+  }
+
+  void _onValueManuallyEntered(BuildContext context, String input) {
+    if (input.isEmpty) {
+      return;
+    }
+
+    final int parsedInput = int.parse(input);
+
+    context
+        .read<HabitCreatorBloc>()
+        .add(HabitCreatorCounterChanged(parsedInput));
+  }
+
+  void _updateVisibleValue(int newValue) {
+    final text = newValue.toString();
+    _counterEditingController.value = TextEditingValue(
+        text: text, selection: TextSelection.collapsed(offset: text.length));
   }
 }
 
