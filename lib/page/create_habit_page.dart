@@ -52,7 +52,6 @@ class CreateHabitView extends StatelessWidget {
   final _goalOptionController = OptionController();
   final _timeframeOptionController = OptionController();
   final _counterEditingController = TextEditingController(text: "0");
-  final _durationPickerController = DurationPickerController();
 
   CreateHabitView({Key? key}) : super(key: key);
 
@@ -107,8 +106,6 @@ class CreateHabitView extends StatelessWidget {
                         _counterEditingController,
                       )
                           : TimerSetupView(
-                        durationPickerController:
-                        _durationPickerController,
                       ))
                 ],
               ),
@@ -173,7 +170,7 @@ class CreateHabitView extends StatelessWidget {
       case 0:
         return int.parse(_counterEditingController.text);
       case 1:
-        return _durationPickerController.duration.inMilliseconds;
+        return 0;
       default:
         return throw Exception("Unexpected goal type index [$tabIndex]");
     }
@@ -221,21 +218,24 @@ class GoalTypeSelector extends StatelessWidget {
 }
 
 class TimerSetupView extends StatelessWidget {
-  final DurationPickerController _controller;
-
-  TimerSetupView({Key? key, DurationPickerController? durationPickerController})
-      : _controller = durationPickerController ?? DurationPickerController(),
-        super(key: key);
+  const TimerSetupView(
+      {Key? key, DurationPickerController? durationPickerController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-          height: 120,
-          child: DurationPicker(
-            controller: _controller,
-          )),
+        height: 120,
+        child: DurationPicker(
+            onHoursChanged: (hours) => context
+                .read<HabitCreatorBloc>()
+                .add(HabitCreatorTimerHoursChanged(hours)),
+            onMinutesChanged: (minutes) => context
+                .read<HabitCreatorBloc>()
+                .add(HabitCreatorTimerMinutesChanged(minutes))),
+      ),
     );
   }
 }

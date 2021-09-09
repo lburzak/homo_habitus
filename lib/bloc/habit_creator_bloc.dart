@@ -44,18 +44,16 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
       }
     } else if (event is HabitCreatorCounterDecremented) {
       if (state.targetCount < 99) {
-        yield state.copyWith(
-            targetCount: state.targetCount + 1
-        );
+        yield state.copyWith(targetCount: state.targetCount + 1);
       }
+    } else if (event is HabitCreatorTimerHoursChanged) {
+      yield state.copyWith(targetHours: event.hours);
+    } else if (event is HabitCreatorTimerMinutesChanged) {
+      yield state.copyWith(targetHours: event.minutes);
     } else if (event is HabitCreatorGoalChanged) {
-      yield state.copyWith(
-        goalType: event.goalType
-      );
+      yield state.copyWith(goalType: event.goalType);
     } else if (event is HabitCreatorTimeframeChanged) {
-      yield state.copyWith(
-        timeframe: event.timeframe
-      );
+      yield state.copyWith(timeframe: event.timeframe);
     } else if (event is HabitCreatorSubmitted) {
       final habit = Habit(id: 0, iconName: state.icon.name, name: state.name);
 

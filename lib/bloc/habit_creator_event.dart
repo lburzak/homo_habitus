@@ -32,6 +32,24 @@ class HabitCreatorCounterDecremented extends HabitCreatorEvent {
   List<Object> get props => [];
 }
 
+class HabitCreatorTimerHoursChanged extends HabitCreatorEvent {
+  final int hours;
+
+  const HabitCreatorTimerHoursChanged(this.hours);
+
+  @override
+  List<Object> get props => [hours];
+}
+
+class HabitCreatorTimerMinutesChanged extends HabitCreatorEvent {
+  final int minutes;
+
+  const HabitCreatorTimerMinutesChanged(this.minutes);
+
+  @override
+  List<Object> get props => [minutes];
+}
+
 class HabitCreatorGoalChanged extends HabitCreatorEvent {
   final GoalType goalType;
 
