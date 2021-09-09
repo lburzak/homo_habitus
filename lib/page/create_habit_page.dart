@@ -271,10 +271,8 @@ class CounterSetupView extends StatelessWidget {
           child: Column(
             children: [
               BlocListener<HabitCreatorBloc, HabitCreatorState>(
-                listener: (context, state) {
-                  print(state);
-                  _updateVisibleValue(state.targetCount);
-                },
+                listener: (context, state) =>
+                    _updateVisibleValue(state.targetCount),
                 child: TextField(
                   controller: _counterEditingController,
                   onTap: _selectAll,
