@@ -40,6 +40,7 @@ class HabitCreatorState extends Equatable {
         icon,
         name,
         timeframe,
+        goalType,
         targetCount,
         targetHours,
         targetMinutes,
