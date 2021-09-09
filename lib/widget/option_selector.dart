@@ -4,12 +4,13 @@ import 'package:homo_habitus/util/extensions.dart';
 
 class OptionSelector extends StatelessWidget {
   OptionSelector(
-      {Key? key, required this.options, OptionController? controller})
+      {Key? key, required this.options, OptionController? controller, this.onChange})
       : super(key: key) {
     _controller = controller ?? OptionController();
   }
 
   final List<Option> options;
+  final void Function(dynamic)? onChange;
   late final OptionController _controller;
 
   @override
@@ -28,6 +29,7 @@ class OptionSelector extends StatelessWidget {
                     onTap: index != selectedIndex
                         ? () {
                             _controller.selectIndex(index);
+                            onChange!(options[index].value);
                           }
                         : null,
                   ))
