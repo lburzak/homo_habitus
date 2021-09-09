@@ -52,11 +52,12 @@ class OptionController {
       : _selectedIndex = ValueNotifier(initialIndex);
 }
 
-class Option {
+class Option<T> {
+  final T value;
   final String label;
   final Icon? leading;
 
-  Option(this.label, {this.leading});
+  Option(this.value, {this.leading, String? label}) : label = label ?? value.toString();
 }
 
 class OptionView extends StatelessWidget {
