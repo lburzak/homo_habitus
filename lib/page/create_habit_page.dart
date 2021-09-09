@@ -121,12 +121,14 @@ class CreateHabitView extends StatelessWidget {
                 clipBehavior: Clip.hardEdge,
                 child: SizedBox(
                   height: 48,
-                  child: OptionSelector(
-                    controller: _timeframeOptionController,
+                  child: OptionSelector<Timeframe>(
+                    onChange: (timeframe) => context
+                        .read<HabitCreatorBloc>()
+                        .add(HabitCreatorTimeframeChanged(timeframe)),
                     options: [
-                      Option("Daily"),
-                      Option("Weekly"),
-                      Option("Monthly")
+                      Option(Timeframe.day, label: "Daily"),
+                      Option(Timeframe.week, label: "Weekly"),
+                      Option(Timeframe.month, label: "Monthly")
                     ],
                   ),
                 ),
