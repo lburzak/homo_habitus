@@ -3,10 +3,15 @@ import 'package:homo_habitus/widget/wheel_picker.dart';
 
 class DurationPicker extends StatelessWidget {
   final DurationPickerController _durationPickerController;
+  final void Function(int)? onHoursChanged;
+  final void Function(int)? onMinutesChanged;
 
-  DurationPicker({Key? key, DurationPickerController? controller})
-      : _durationPickerController =
-            controller ?? DurationPickerController(),
+  DurationPicker(
+      {Key? key,
+      DurationPickerController? controller,
+      this.onHoursChanged,
+      this.onMinutesChanged})
+      : _durationPickerController = controller ?? DurationPickerController(),
         super(key: key);
 
   @override
@@ -18,8 +23,10 @@ class DurationPicker extends StatelessWidget {
               const PickerLabel("hours"),
               Expanded(
                 child: HoursPicker(
-                  onSelectedItemChanged: (number) =>
-                      _durationPickerController.hours = number,
+                  onSelectedItemChanged: (number) {
+                    _durationPickerController.hours = number;
+                    onHoursChanged!(number);
+                  },
                 ),
               ),
             ],
@@ -33,8 +40,10 @@ class DurationPicker extends StatelessWidget {
               const PickerLabel("minutes"),
               Expanded(
                 child: MinutesPicker(
-                  onSelectedItemChanged: (number) =>
-                      _durationPickerController.minutes = number,
+                  onSelectedItemChanged: (number) {
+                    _durationPickerController.minutes = number;
+                    onMinutesChanged!(number);
+                  },
                 ),
               ),
             ],
