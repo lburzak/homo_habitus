@@ -7,9 +7,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
+import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
@@ -405,27 +405,28 @@ class IconSelector extends StatelessWidget {
 }
 
 class IconSelectionGrid extends StatelessWidget {
-  final void Function(String)? onIconSelected;
+  final void Function(IconAsset)? onIconSelected;
 
   const IconSelectionGrid({Key? key, this.onIconSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Provider<IconRepository>(
-      create: (context) => IconRepository(),
+    return Provider<IconAssetRepository>(
+      create: (context) => IconAssetRepository(),
       builder: (context, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Text("Choose icon", style: Theme.of(context).textTheme.subtitle1),
+            child: Text("Choose icon",
+                style: Theme.of(context).textTheme.subtitle1),
           ),
           Expanded(
-            child: FutureBuilder<List<String>>(
-              future: context.read<IconRepository>().readIconNames(),
+            child: FutureBuilder<List<IconAsset>>(
+              future: context.read<IconAssetRepository>().findAllIcons(),
               builder: (context, snapshot) => snapshot.hasData
                   ? GridView.builder(
-                itemCount: snapshot.data!.length,
+                      itemCount: snapshot.data!.length,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -446,10 +447,10 @@ class IconSelectionGrid extends StatelessWidget {
 }
 
 class IconSelectionTile extends StatelessWidget {
-  final String assetName;
+  final IconAsset iconAsset;
   final void Function()? onTap;
 
-  const IconSelectionTile(this.assetName, {Key? key, this.onTap})
+  const IconSelectionTile(this.iconAsset, {Key? key, this.onTap})
       : super(key: key);
 
   @override
@@ -459,21 +460,18 @@ class IconSelectionTile extends StatelessWidget {
       child: FractionallySizedBox(
         widthFactor: 0.6,
         heightFactor: 0.6,
-        child: SvgPicture.asset(
-          assetName,
-          color: Theme.of(context).iconTheme.color,
-        ),
+        child: iconAsset.asSvgPicture(context),
       ),
     );
   }
 }
 
-class IconRepository {
+class IconAssetRepository {
   static const String _assetManifest = "AssetManifest.json";
   bool _isLoaded = false;
-  List<String> _icons = List.empty();
+  List<IconAsset> _icons = List.empty();
 
-  Future<List<String>> readIconNames() async {
+  Future<List<IconAsset>> findAllIcons() async {
     if (!_isLoaded) {
       await _loadIconAssets();
       _isLoaded = true;
@@ -486,10 +484,18 @@ class IconRepository {
     final manifestContent = await _readManifest();
     final Map<String, dynamic> jsonManifest = json.decode(manifestContent);
 
-    _icons = jsonManifest.keys
+    final Iterable<String> paths = jsonManifest.keys
         .where((key) => key.startsWith("assets/icons"))
-        .where((key) => key.endsWith('.svg'))
-        .toList();
+        .where((key) => key.endsWith('.svg'));
+
+    _icons = paths
+        .map((path) =>
+            IconAsset(name: _decodeIconNameFromPath(path), path: path))
+        .toList(growable: false);
+  }
+
+  String _decodeIconNameFromPath(String path) {
+    return path.split(".").first.split("/").last;
   }
 
   Future<String> _readManifest() async =>

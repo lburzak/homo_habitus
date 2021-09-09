@@ -6,10 +6,15 @@ class IconAsset {
   final String name;
   final String path;
 
-  IconAsset(this.name, this.path);
+  IconAsset({required this.name, required this.path});
 
   SvgPicture asSvgPicture(BuildContext context) => SvgPicture.asset(
     path,
     color: Theme.of(context).iconTheme.color,
   );
+
+  @override
+  String toString() {
+    return 'IconAsset{name: $name, path: $path}';
+  }
 }
