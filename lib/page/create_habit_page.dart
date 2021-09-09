@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
@@ -35,7 +36,10 @@ class CreateHabitPage extends StatelessWidget {
               Center(
                 child: FractionallySizedBox(
                   widthFactor: 0.8,
-                  child: CreateHabitView(),
+                  child: BlocProvider<HabitCreatorBloc>(
+                    create: (context) => HabitCreatorBloc(),
+                    child: CreateHabitView(),
+                  ),
                 ),
               )
             ]))
@@ -47,7 +51,6 @@ class CreateHabitPage extends StatelessWidget {
 class CreateHabitView extends StatelessWidget {
   final _goalOptionController = OptionController();
   final _timeframeOptionController = OptionController();
-  final _habitNameController = TextEditingController();
   final _counterEditingController = TextEditingController(text: "0");
   final _durationPickerController = DurationPickerController();
 
@@ -73,8 +76,8 @@ class CreateHabitView extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: TextField(
-                              controller: _habitNameController,
                               textAlign: TextAlign.center,
+                              onChanged: (text) => context.read<HabitCreatorBloc>().add(HabitCreatorNameChanged(text)),
                               decoration: const InputDecoration.collapsed(
                                   hintText: "Your habit..."),
                             ),
@@ -176,10 +179,8 @@ class CreateHabitView extends StatelessWidget {
     }
   }
 
-  String get _selectedHabitName => _habitNameController.text;
-
   void _submit() {
-    final habit = Habit(id: 0, iconName: "", name: _selectedHabitName);
+    final habit = Habit(id: 0, iconName: "", name: "");
 
     final goal = Goal(
         timeframe: _selectedTimeframe,
