@@ -9,7 +9,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
 import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
@@ -50,8 +49,6 @@ class CreateHabitPage extends StatelessWidget {
 
 class CreateHabitView extends StatelessWidget {
   final _goalOptionController = OptionController();
-  final _timeframeOptionController = OptionController();
-  final _counterEditingController = TextEditingController(text: "0");
 
   CreateHabitView({Key? key}) : super(key: key);
 
@@ -135,60 +132,17 @@ class CreateHabitView extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
-          child: SizedBox(height: 48, child: ElevatedButton.icon(onPressed: _submit, icon: const Icon(Icons.add), label: const SizedBox.shrink())),
+          child: SizedBox(
+              height: 48,
+              child: ElevatedButton.icon(
+                  onPressed: () => context
+                      .read<HabitCreatorBloc>()
+                      .add(HabitCreatorSubmitted()),
+                  icon: const Icon(Icons.add),
+                  label: const SizedBox.shrink())),
         )
       ],
     );
-  }
-
-
-  GoalType get _selectedGoalType {
-    final tabIndex = _goalOptionController.selectedIndex.value;
-    switch (tabIndex) {
-      case 0:
-        return GoalType.counter;
-      case 1:
-        return GoalType.timer;
-      default:
-        return throw Exception("Unexpected goal type index [$tabIndex]");
-    }
-  }
-
-  Timeframe get _selectedTimeframe {
-    final tabIndex = _timeframeOptionController.selectedIndex.value;
-    switch (tabIndex) {
-      case 0:
-        return Timeframe.day;
-      case 1:
-        return Timeframe.week;
-      case 2:
-        return Timeframe.month;
-      default:
-        return throw Exception("Unexpected timeframe index [$tabIndex]");
-    }
-  }
-
-  int get _selectedTargetProgress {
-    final tabIndex = _goalOptionController.selectedIndex.value;
-    switch (tabIndex) {
-      case 0:
-        return int.parse(_counterEditingController.text);
-      case 1:
-        return 0;
-      default:
-        return throw Exception("Unexpected goal type index [$tabIndex]");
-    }
-  }
-
-  void _submit() {
-    final habit = Habit(id: 0, iconName: "", name: "");
-
-    final goal = Goal(
-        timeframe: _selectedTimeframe,
-        type: _selectedGoalType,
-        targetProgress: _selectedTargetProgress);
-
-    print("Saving habit $habit with goal $goal");
   }
 }
 
