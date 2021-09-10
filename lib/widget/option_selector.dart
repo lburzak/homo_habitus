@@ -2,56 +2,45 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:homo_habitus/util/extensions.dart';
 
-class OptionSelector<T> extends StatelessWidget {
-  OptionSelector(
-      {Key? key, required this.options, OptionController? controller, this.onChange})
-      : super(key: key) {
-    _controller = controller ?? OptionController();
-  }
+class OptionSelector<T> extends StatefulWidget {
+  const OptionSelector(
+      {Key? key, required this.options, this.onChange})
+      : super(key: key);
 
   final List<Option<T>> options;
   final void Function(T)? onChange;
-  late final OptionController _controller;
+
+  @override
+  State<OptionSelector<T>> createState() => _OptionSelectorState<T>();
+}
+
+class _OptionSelectorState<T> extends State<OptionSelector<T>> {
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).colorScheme.onBackground,
       clipBehavior: Clip.hardEdge,
-      child: ValueListenableBuilder(
-        valueListenable: _controller.selectedIndex,
-        builder: (context, selectedIndex, child) => Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: options
-              .mapIndexed((option, index) => OptionView(
-                    option,
-                    selected: index == selectedIndex,
-                    onTap: index != selectedIndex
-                        ? () {
-                            _controller.selectIndex(index);
-                            onChange!(options[index].value);
-                          }
-                        : null,
-                  ))
-              .toList(),
-        ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: widget.options
+            .mapIndexed((option, index) => OptionView(
+          option,
+          selected: index == selectedIndex,
+          onTap: index != selectedIndex
+              ? () {
+            setState(() {
+              selectedIndex = index;
+              widget.onChange!(widget.options[index].value);
+            });
+          }
+              : null,
+        ))
+            .toList(),
       ),
     );
   }
-}
-
-class OptionController {
-  final int initialIndex;
-  final ValueNotifier<int> _selectedIndex;
-
-  ValueListenable<int> get selectedIndex => _selectedIndex;
-
-  void selectIndex(int value) {
-    _selectedIndex.value = value;
-  }
-
-  OptionController({this.initialIndex = 0})
-      : _selectedIndex = ValueNotifier(initialIndex);
 }
 
 class Option<T> {

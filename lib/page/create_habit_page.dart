@@ -48,8 +48,6 @@ class CreateHabitPage extends StatelessWidget {
 }
 
 class CreateHabitView extends StatelessWidget {
-  final _goalOptionController = OptionController();
-
   CreateHabitView({Key? key}) : super(key: key);
 
   @override
@@ -90,10 +88,9 @@ class CreateHabitView extends StatelessWidget {
               color: Theme.of(context).colorScheme.onBackground,
               child: Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 48,
-                    child: GoalTypeSelector(
-                        goalOptionController: _goalOptionController),
+                    child: GoalTypeSelector(),
                   ),
                   BlocBuilder<HabitCreatorBloc, HabitCreatorState>(
                       builder: (context, state) {
@@ -146,12 +143,16 @@ class CreateHabitView extends StatelessWidget {
   }
 }
 
-class GoalTypeSelector extends StatelessWidget {
+class GoalTypeSelector extends StatefulWidget {
   const GoalTypeSelector({
     Key? key,
-    required OptionController goalOptionController,
   }) : super(key: key);
 
+  @override
+  State<GoalTypeSelector> createState() => _GoalTypeSelectorState();
+}
+
+class _GoalTypeSelectorState extends State<GoalTypeSelector> {
   @override
   Widget build(BuildContext context) {
     return OptionSelector<GoalType>(
