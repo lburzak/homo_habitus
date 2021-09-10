@@ -37,7 +37,7 @@ class CreateHabitPage extends StatelessWidget {
                   widthFactor: 0.8,
                   child: BlocProvider<HabitCreatorBloc>(
                     create: (context) => HabitCreatorBloc(),
-                    child: CreateHabitView(),
+                    child: const CreateHabitView(),
                   ),
                 ),
               )
@@ -48,7 +48,7 @@ class CreateHabitPage extends StatelessWidget {
 }
 
 class CreateHabitView extends StatelessWidget {
-  CreateHabitView({Key? key}) : super(key: key);
+  const CreateHabitView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
