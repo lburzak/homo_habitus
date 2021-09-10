@@ -99,7 +99,7 @@ class CreateHabitView extends StatelessWidget {
                       builder: (context, state) {
                         switch (state.goalType) {
                           case GoalType.counter:
-                            return CounterSetupView();
+                            return const CounterSetupView();
                           case GoalType.timer:
                             return const TimerSetupView();
                         }
@@ -199,11 +199,17 @@ class TimerSetupView extends StatelessWidget {
   }
 }
 
-class CounterSetupView extends StatelessWidget {
-  final TextEditingController _counterEditingController =
-      TextEditingController(text: "0");
+class CounterSetupView extends StatefulWidget {
+  const CounterSetupView({Key? key}) : super(key: key);
 
-  CounterSetupView({Key? key}) : super(key: key);
+  @override
+  State<CounterSetupView> createState() => _CounterSetupViewState();
+}
+
+class _CounterSetupViewState extends State<CounterSetupView> {
+  late final TextEditingController _counterEditingController =
+      TextEditingController(
+          text: context.read<HabitCreatorBloc>().state.targetCount.toString());
 
   @override
   Widget build(BuildContext context) {
