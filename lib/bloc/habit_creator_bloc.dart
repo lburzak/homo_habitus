@@ -54,6 +54,8 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
       yield state.copyWith(goalType: event.goalType);
     } else if (event is HabitCreatorTimeframeChanged) {
       yield state.copyWith(timeframe: event.timeframe);
+    } else if (event is HabitCreatorIconChanged) {
+      yield state.copyWith(icon: event.icon);
     } else if (event is HabitCreatorSubmitted) {
       final habit = Habit(id: 0, iconName: state.icon.name, name: state.name);
 

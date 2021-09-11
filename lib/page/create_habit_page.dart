@@ -20,10 +20,10 @@ class CreateHabitPage extends StatelessWidget {
   const CreateHabitPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => const Scaffold(
     body: CustomScrollView(
       slivers: [
-        const SliverAppBar(
+        SliverAppBar(
           title: Text('New habit'),
           pinned: true,
           elevation: 4,
@@ -35,10 +35,7 @@ class CreateHabitPage extends StatelessWidget {
               Center(
                 child: FractionallySizedBox(
                   widthFactor: 0.8,
-                  child: BlocProvider<HabitCreatorBloc>(
-                    create: (context) => HabitCreatorBloc(),
-                    child: const CreateHabitView(),
-                  ),
+                  child: CreateHabitView(),
                 ),
               )
             ]))
@@ -331,17 +328,24 @@ class IconSelector extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => _showIconSelectionDialog(context),
-          child: const FractionallySizedBox(
-            heightFactor: 0.5,
-            widthFactor: 0.5,
-            child: Icon(Icons.extension),
+          child: BlocBuilder<HabitCreatorBloc, HabitCreatorState>(
+            builder: (context, state) => FractionallySizedBox(
+              heightFactor: 0.5,
+              widthFactor: 0.5,
+              child: state.icon.asSvgPicture(context),
+            ),
           ),
         ));
   }
 
   void _showIconSelectionDialog(BuildContext context) {
     showModalBottomSheet(
-        context: context, builder: (context) => IconSelectionGrid(onIconSelected: (icon) => print(icon),));
+        context: context,
+        builder: (context) => IconSelectionGrid(
+              onIconSelected: (icon) => context
+                  .read<HabitCreatorBloc>()
+                  .add(HabitCreatorIconChanged(icon)),
+            ));
   }
 }
 

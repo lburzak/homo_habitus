@@ -68,6 +68,15 @@ class HabitCreatorTimeframeChanged extends HabitCreatorEvent {
   List<Object> get props => [timeframe];
 }
 
+class HabitCreatorIconChanged extends HabitCreatorEvent {
+  final IconAsset icon;
+
+  const HabitCreatorIconChanged(this.icon);
+
+  @override
+  List<Object> get props => [icon];
+}
+
 class HabitCreatorSubmitted extends HabitCreatorEvent {
   @override
   List<Object> get props => [];

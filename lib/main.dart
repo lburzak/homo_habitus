@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
 import 'package:homo_habitus/page/create_habit_page.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/theme.dart';
@@ -18,15 +19,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider(
       create: (context) => HabitRepository(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Homo Habitus',
-        theme: themeData,
-        routes: {
-          "/": (context) => const HomePage(),
-          "/habit": (context) => const HabitPage(),
-          "/create_habit": (context) => CreateHabitPage()
-        },
+      child: BlocProvider<HabitCreatorBloc>(
+        create: (context) => HabitCreatorBloc(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Homo Habitus',
+          theme: themeData,
+          routes: {
+            "/": (context) => const HomePage(),
+            "/habit": (context) => const HabitPage(),
+            "/create_habit": (context) => const CreateHabitPage()
+          },
+        ),
       ),
     );
   }
