@@ -17,7 +17,7 @@ import 'package:homo_habitus/widget/round_button.dart';
 import 'package:provider/provider.dart';
 
 class CreateHabitPage extends StatelessWidget {
-  CreateHabitPage({Key? key}) : super(key: key);
+  const CreateHabitPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
