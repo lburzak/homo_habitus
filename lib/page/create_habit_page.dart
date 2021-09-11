@@ -236,6 +236,10 @@ class _CounterSetupViewState extends State<CounterSetupView> {
                     _updateVisibleValue(state.targetCount),
                 child: TextField(
                   controller: _counterEditingController,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(2),
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                   onTap: _selectAll,
                   onChanged: (text) => _onValueManuallyEntered(context, text),
                   keyboardType: TextInputType.number,
