@@ -22,7 +22,7 @@ class HabitPage extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as HabitPageArguments;
 
     return BlocProvider(
-        create: (BuildContext context) => HabitPreviewBloc(args.habitStatus, HabitRepository()),
+        create: (BuildContext context) => HabitPreviewBloc(args.habitStatus, context.read<HabitRepository>()),
         child: const HabitPreview());
   }
 }
