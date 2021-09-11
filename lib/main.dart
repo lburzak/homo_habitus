@@ -4,7 +4,10 @@ import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
 import 'package:homo_habitus/page/create_habit_page.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 
+import 'data/app_database.dart';
 import 'page/habit_page.dart';
 import 'page/home_page.dart';
 
@@ -17,21 +20,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => HabitRepository(),
-      child: BlocProvider<HabitCreatorBloc>(
-        create: (context) => HabitCreatorBloc(),
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Homo Habitus',
-          theme: themeData,
-          routes: {
-            "/": (context) => const HomePage(),
-            "/habit": (context) => const HabitPage(),
-            "/create_habit": (context) => const CreateHabitPage()
-          },
-        ),
-      ),
+    return FutureBuilder<Database>(
+      future: openAppDatabase(),
+      builder: (context, snapshot) => snapshot.hasData
+          ? Provider<Database>.value(
+              value: snapshot.data!,
+              child: RepositoryProvider(
+                create: (context) =>
+                    HabitRepository(context.read<Database>()),
+                child: BlocProvider<HabitCreatorBloc>(
+                  create: (context) => HabitCreatorBloc(),
+                  child: MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    title: 'Homo Habitus',
+                    theme: themeData,
+                    routes: {
+                      "/": (context) => const HomePage(),
+                      "/habit": (context) => const HabitPage(),
+                      "/create_habit": (context) => const CreateHabitPage()
+                    },
+                  ),
+                ),
+              ),
+            )
+          : const SizedBox.shrink(),
     );
   }
 }
