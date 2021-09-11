@@ -88,13 +88,10 @@ class Queries {
   ''';
 
   static const String populateGoalTypeTable = '''
-  insert into ${Tables.goalType} values (counter);
-  insert into ${Tables.goalType} values (timer);
+  insert into ${Tables.goalType} values ('counter'), ('timer');
   ''';
 
   static const String populateTimeframeTable = '''
-  insert into ${Tables.timeframe} values (day);
-  insert into ${Tables.timeframe} values (week);
-  insert into ${Tables.timeframe} values (month);
+  insert into ${Tables.timeframe} values ('day'), ('week'), ('month');
   ''';
 }
