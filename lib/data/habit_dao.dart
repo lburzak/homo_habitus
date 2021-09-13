@@ -22,8 +22,11 @@ class HabitDao {
     return id;
   }
 
-  Stream<List<Habit>> watch() => _dataChanges.asyncMap((_) async =>
-      (await db.query(table)).map((results) => habitFromMap(results)).toList());
+  Stream<List<Habit>> watch({String? where, List<Object?>? whereArgs}) =>
+      _dataChanges.asyncMap((_) async =>
+          (await db.query(table, where: where, whereArgs: whereArgs))
+              .map((results) => habitFromMap(results))
+              .toList());
 
   void _notifyDataChanged() {
     _dataChangesController.add(null);
