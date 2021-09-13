@@ -92,8 +92,8 @@ class Queries {
     ${Columns.goal.type} text,
     ${Columns.goal.timeframe} text,
     ${Columns.goal.assignmentDate} integer,
-    foreign key(${Columns.goal.habitId}) references ${Tables.habit}(${Columns.habit.id})
-    foreign key(${Columns.goal.type}) references ${Tables.goalType}(${Columns.goalType.name})
+    foreign key(${Columns.goal.habitId}) references ${Tables.habit}(${Columns.habit.id}),
+    foreign key(${Columns.goal.type}) references ${Tables.goalType}(${Columns.goalType.name}),
     foreign key(${Columns.goal.timeframe}) references ${Tables.timeframe}(${Columns.goalType.name})
   );
   ''';
