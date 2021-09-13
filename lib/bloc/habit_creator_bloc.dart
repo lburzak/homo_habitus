@@ -6,12 +6,15 @@ import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
+import 'package:homo_habitus/repository/habit_repository.dart';
 
 part 'habit_creator_event.dart';
 part 'habit_creator_state.dart';
 
 class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
-  HabitCreatorBloc() : super(HabitCreatorState(
+  final HabitRepository habitRepository;
+
+  HabitCreatorBloc(this.habitRepository) : super(HabitCreatorState(
     name: "",
     icon: IconAsset(
       name: "fact_check",
@@ -22,6 +25,7 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
     targetCount: 0,
     targetMinutes: 0,
     targetHours: 0,
+    finished: false
   ));
 
   @override
@@ -64,7 +68,8 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
           type: state.goalType,
           targetProgress: state.targetProgress);
 
-      print("Saving habit $habit with goal $goal");
+      await habitRepository.createHabit(habit, goal);
+      yield state.copyWith(finished: true);
     }
   }
 

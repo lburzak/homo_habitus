@@ -20,26 +20,33 @@ class CreateHabitPage extends StatelessWidget {
   const CreateHabitPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => const Scaffold(
-    body: CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          title: Text('New habit'),
-          pinned: true,
-          elevation: 4,
-          collapsedHeight: 80,
-          toolbarHeight: 80,
-        ),
-        SliverList(
-            delegate: SliverChildListDelegate.fixed([
-              Center(
-                child: FractionallySizedBox(
-                  widthFactor: 0.8,
-                  child: CreateHabitView(),
-                ),
-              )
-            ]))
-      ],
+  Widget build(BuildContext context) => BlocListener<HabitCreatorBloc, HabitCreatorState>(
+    listener: (context, state) {
+      if (state.finished) {
+        Navigator.pop(context);
+      }
+    },
+    child: const Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            title: Text('New habit'),
+            pinned: true,
+            elevation: 4,
+            collapsedHeight: 80,
+            toolbarHeight: 80,
+          ),
+          SliverList(
+              delegate: SliverChildListDelegate.fixed([
+                Center(
+                  child: FractionallySizedBox(
+                    widthFactor: 0.8,
+                    child: CreateHabitView(),
+                  ),
+                )
+              ]))
+        ],
+      ),
     ),
   );
 }

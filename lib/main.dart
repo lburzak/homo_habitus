@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
                 create: (context) =>
                     HabitRepository(context.read<Database>()),
                 child: BlocProvider<HabitCreatorBloc>(
-                  create: (context) => HabitCreatorBloc(),
+                  create: (context) => HabitCreatorBloc(context.read<HabitRepository>()),
                   child: MaterialApp(
                     debugShowCheckedModeBanner: false,
                     title: 'Homo Habitus',

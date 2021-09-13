@@ -8,6 +8,7 @@ class HabitCreatorState extends Equatable {
   final int targetHours;
   final int targetMinutes;
   final GoalType goalType;
+  final bool finished;
 
   const HabitCreatorState(
       {required this.icon,
@@ -16,7 +17,8 @@ class HabitCreatorState extends Equatable {
       required this.targetCount,
       required this.targetHours,
       required this.targetMinutes,
-      required this.goalType});
+      required this.goalType,
+      required this.finished});
 
   HabitCreatorState copyWith(
           {IconAsset? icon,
@@ -25,7 +27,8 @@ class HabitCreatorState extends Equatable {
           int? targetCount,
           int? targetHours,
           int? targetMinutes,
-          GoalType? goalType}) =>
+          GoalType? goalType,
+          bool? finished}) =>
       HabitCreatorState(
           icon: icon ?? this.icon,
           name: name ?? this.name,
@@ -33,7 +36,8 @@ class HabitCreatorState extends Equatable {
           targetCount: targetCount ?? this.targetCount,
           targetHours: targetHours ?? this.targetHours,
           targetMinutes: targetMinutes ?? this.targetMinutes,
-          goalType: goalType ?? this.goalType);
+          goalType: goalType ?? this.goalType,
+          finished: finished ?? this.finished);
 
   @override
   List<Object> get props => [
@@ -44,5 +48,6 @@ class HabitCreatorState extends Equatable {
         targetCount,
         targetHours,
         targetMinutes,
+        finished
       ];
 }
