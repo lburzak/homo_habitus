@@ -11,6 +11,7 @@ import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
+import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
 import 'package:homo_habitus/widget/round_button.dart';
@@ -20,35 +21,38 @@ class CreateHabitPage extends StatelessWidget {
   const CreateHabitPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => BlocListener<HabitCreatorBloc, HabitCreatorState>(
-    listener: (context, state) {
-      if (state.finished) {
-        Navigator.pop(context);
-      }
-    },
-    child: const Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            title: Text('New habit'),
-            pinned: true,
-            elevation: 4,
-            collapsedHeight: 80,
-            toolbarHeight: 80,
-          ),
-          SliverList(
-              delegate: SliverChildListDelegate.fixed([
-                Center(
-                  child: FractionallySizedBox(
-                    widthFactor: 0.8,
-                    child: CreateHabitView(),
+  Widget build(BuildContext context) => Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('New habit'),
+              pinned: true,
+              elevation: 4,
+              collapsedHeight: 80,
+              toolbarHeight: 80,
+            ),
+            SliverList(
+                delegate: SliverChildListDelegate.fixed([
+              Center(
+                child: FractionallySizedBox(
+                  widthFactor: 0.8,
+                  child: BlocProvider<HabitCreatorBloc>(
+                    create: (context) =>
+                        HabitCreatorBloc(context.read<HabitRepository>()),
+                    child: BlocListener<HabitCreatorBloc, HabitCreatorState>(
+                        listener: (context, state) {
+                          if (state.finished) {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const CreateHabitView()),
                   ),
-                )
-              ]))
-        ],
-      ),
-    ),
-  );
+                ),
+              )
+            ]))
+          ],
+        ),
+      );
 }
 
 class CreateHabitView extends StatelessWidget {
@@ -345,11 +349,11 @@ class IconSelector extends StatelessWidget {
         ));
   }
 
-  void _showIconSelectionDialog(BuildContext context) {
+  void _showIconSelectionDialog(BuildContext pageContext) {
     showModalBottomSheet(
-        context: context,
+        context: pageContext,
         builder: (context) => IconSelectionGrid(
-              onIconSelected: (icon) => context
+              onIconSelected: (icon) => pageContext
                   .read<HabitCreatorBloc>()
                   .add(HabitCreatorIconChanged(icon)),
             ));
