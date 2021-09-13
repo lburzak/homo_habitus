@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/model/habit_status.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
+import 'package:provider/provider.dart';
 
 import 'habit_page.dart';
 
@@ -11,9 +11,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HabitRepository habitRepository = RepositoryProvider.of(context);
-    final habits = habitRepository.getTodayHabits();
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           child:
@@ -33,20 +30,28 @@ class HomePage extends StatelessWidget {
             ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-              sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                          (context, index) => InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: () {
-                          _openHabitScreen(context, habits[index]);
-                        },
-                        child: HabitIndicator(habitStatus: habits[index]),
-                      ),
-                      childCount: habits.length),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12)),
+              sliver: FutureBuilder<List<HabitStatus>>(
+                future: context.read<HabitRepository>().getTodayHabits(),
+                builder: (context, snapshot) => snapshot.hasData
+                    ? SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                            (context, index) => InkWell(
+                                  customBorder: const CircleBorder(),
+                                  onTap: () {
+                                    _openHabitScreen(
+                                        context, snapshot.requireData[index]);
+                                  },
+                                  child: HabitIndicator(
+                                      habitStatus: snapshot.requireData[index]),
+                                ),
+                            childCount: snapshot.requireData.length),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12))
+                    : const SliverPadding(padding: EdgeInsets.all(2),),
+              ),
             )
           ],
         ),
