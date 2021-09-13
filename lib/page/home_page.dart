@@ -30,8 +30,8 @@ class HomePage extends StatelessWidget {
             ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-              sliver: FutureBuilder<List<HabitStatus>>(
-                future: context.read<HabitRepository>().getTodayHabits(),
+              sliver: StreamBuilder<List<HabitStatus>>(
+                stream: context.read<HabitRepository>().getTodayHabits(),
                 builder: (context, snapshot) => snapshot.hasData
                     ? SliverGrid(
                         delegate: SliverChildBuilderDelegate(

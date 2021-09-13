@@ -1,4 +1,5 @@
 import 'package:homo_habitus/data/database_schema.dart';
+import 'package:homo_habitus/data/habit_dao.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/habit_progress.dart';
@@ -8,24 +9,22 @@ import 'package:homo_habitus/util/datetime.dart';
 import 'package:sqflite/sqflite.dart';
 
 class HabitRepository {
+  final HabitDao habitDao;
   final Database db;
 
-  HabitRepository(this.db);
+  HabitRepository(this.db) : habitDao = HabitDao(db);
 
-  Future<List<HabitStatus>> getTodayHabits() async {
-    final allHabitEntities = await db.query(Tables.habit);
-    final allHabits = allHabitEntities.map((entity) => habitFromMap(entity));
-    return allHabits
-        .map((habit) => HabitStatus(habit: habit, completionRate: 0.7))
-        .toList();
-  }
+  Stream<List<HabitStatus>> getTodayHabits() =>
+      habitDao.watch().map((habits) => habits
+          .map((habit) => HabitStatus(habit: habit, completionRate: 0.7))
+          .toList());
 
   GoalProgress getProgressByHabitId(int habitId) {
     return TimerGoalProgress(3000, 60000);
   }
 
   Future<void> createHabit(Habit habit, Goal initialGoal) async {
-    int habitId = await db.insert(Tables.habit, habit.toMap());
+    int habitId = await habitDao.insert(habit);
     await db.insert(Tables.goal, initialGoal.toMap(habitId));
   }
 }
