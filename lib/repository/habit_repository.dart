@@ -15,7 +15,9 @@ class HabitRepository {
   HabitRepository(this.db) : habitDao = HabitDao(db);
 
   Stream<List<HabitStatus>> getTodayHabits() =>
-      habitDao.watch().map((habits) => habits
+      habitDao.rawWatch(Queries.selectHabitsByTimeframe, arguments: [
+        Values.timeframe.day
+      ]).map((habits) => habits
           .map((habit) => HabitStatus(habit: habit, completionRate: 0.7))
           .toList());
 

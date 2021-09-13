@@ -28,6 +28,16 @@ class HabitDao {
               .map((results) => habitFromMap(results))
               .toList());
 
+  /// Emits results of given [sql] query, optionally injecting [arguments] into it.
+  ///
+  /// Note: As a raw query, it doesn't put any restriction on the tables
+  /// mentioned in the [sql] query, but it will only emit when [HabitDao]
+  /// mutating methods are invoked.
+  Stream<List<Habit>> rawWatch(String sql, {List<Object?>? arguments}) =>
+      _dataChanges.asyncMap((_) async => (await db.rawQuery(sql, arguments))
+          .map((results) => habitFromMap(results))
+          .toList());
+
   void _notifyDataChanged() {
     _dataChangesController.add(null);
   }
