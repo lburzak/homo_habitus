@@ -84,11 +84,9 @@ class Queries {
   );
   ''';
 
-  // TODO: Add primary keys
-
   static final String createGoalTable = '''
   create table ${Tables.goal} (
-    ${Columns.goal.id} integer,
+    ${Columns.goal.id} integer primary key,
     ${Columns.goal.habitId} integer,
     ${Columns.goal.targetValue} integer,
     ${Columns.goal.type} text,
@@ -102,13 +100,13 @@ class Queries {
 
   static final String createGoalTypeTable = '''
   create table ${Tables.goalType} (
-    ${Columns.goalType.name} text
+    ${Columns.goalType.name} text primary key
   )
   ''';
 
   static final String createTimeframeTable = '''
   create table ${Tables.timeframe} (
-    ${Columns.timeframe.name} text
+    ${Columns.timeframe.name} text primary key
   )
   ''';
 
