@@ -19,4 +19,5 @@ Future<void> _createTables(Database db, int version) async {
 
   db.execute(Queries.createHabitTable);
   db.execute(Queries.createGoalTable);
+  db.execute(Queries.createProgressTable);
 }

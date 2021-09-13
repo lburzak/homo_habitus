@@ -5,6 +5,7 @@ class Tables {
   static const goal = 'goal';
   static const goalType = 'goal_type';
   static const timeframe = 'timeframe';
+  static const progress = 'progress';
 }
 
 class HabitColumns {
@@ -45,11 +46,21 @@ class TimeframeColumns {
   String get name => 'name';
 }
 
+class ProgressColumns {
+  const ProgressColumns();
+
+  String get id => 'id';
+  String get goalId => 'goal_id';
+  String get value => 'value';
+  String get timestamp => 'timestamp';
+}
+
 class Columns {
   static const habit = HabitColumns();
   static const goal = GoalColumns();
   static const goalType = GoalTypeColumns();
   static const timeframe = TimeframeColumns();
+  static const progress = ProgressColumns();
 }
 
 class TimeframeValues {
@@ -72,6 +83,8 @@ class Queries {
     ${Columns.habit.iconName} text
   );
   ''';
+
+  // TODO: Add primary keys
 
   static final String createGoalTable = '''
   create table ${Tables.goal} (
@@ -97,6 +110,17 @@ class Queries {
   create table ${Tables.timeframe} (
     ${Columns.timeframe.name} text
   )
+  ''';
+
+  static final String createProgressTable = '''
+  create table ${Tables.progress} (
+    ${Columns.progress.id} integer primary key autoincrement,
+    ${Columns.progress.goalId} integer,
+    ${Columns.progress.value} integer,
+    ${Columns.progress.timestamp} integer,
+    
+    foreign key(${Columns.progress.goalId}) references ${Tables.goal}(${Columns.goal.id})
+  ) 
   ''';
 
   // TODO: Extract magic strings
