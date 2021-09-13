@@ -52,6 +52,18 @@ class Columns {
   static const timeframe = TimeframeColumns();
 }
 
+class TimeframeValues {
+  const TimeframeValues();
+
+  String get day => 'day';
+  String get week => 'week';
+  String get month => 'month';
+}
+
+class Values {
+  static const timeframe = TimeframeValues();
+}
+
 class Queries {
   static final String createHabitTable = '''
   create table ${Tables.habit} (
@@ -87,11 +99,22 @@ class Queries {
   )
   ''';
 
+  // TODO: Extract magic strings
   static const String populateGoalTypeTable = '''
   insert into ${Tables.goalType} values ('counter'), ('timer');
   ''';
 
-  static const String populateTimeframeTable = '''
-  insert into ${Tables.timeframe} values ('day'), ('week'), ('month');
+  static final String populateTimeframeTable = '''
+  insert into ${Tables.timeframe} values ('${Values.timeframe.day}'), ('${Values.timeframe.week}'), ('${Values.timeframe.month}');
+  ''';
+
+  static final String selectHabitsByTimeframe = '''
+  select ${Tables.habit}.${Columns.habit.id}, ${Tables.habit}.${Columns.habit.name}, ${Tables.habit}.${Columns.habit.iconName}
+  from ${Tables.habit}
+    left join ${Tables.goal}
+      on ${Tables.habit}.${Columns.habit.id} = ${Tables.goal}.${Columns.goal.habitId}
+    left join ${Tables.timeframe}
+      on ${Tables.goal}.${Columns.goal.timeframe} = ${Tables.timeframe}.${Columns.timeframe.name}
+  where ${Tables.timeframe}.${Columns.timeframe.name} = ?
   ''';
 }
