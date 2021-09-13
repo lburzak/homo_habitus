@@ -19,6 +19,7 @@ dependencies:
   flutter_svg: ^0.22.0
   provider: ^6.0.0
   sqflite: ^2.0.0+4
+  rxdart: ^0.27.2
 
 dev_dependencies:
   flutter_test:
