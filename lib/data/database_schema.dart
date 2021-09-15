@@ -168,7 +168,7 @@ class Queries {
   ''';
 
   static const String selectHabitsStatusesByTimeframe = '''
-  select habit.*, current_goal.*, sum(applicable_progress.value) as current_progress
+  select habit.*, current_goal.*, ifnull(sum(applicable_progress.value), 0) as current_progress
   from habit
   left join (
     select goal.*

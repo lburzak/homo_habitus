@@ -15,14 +15,13 @@ class HabitRepository {
   HabitRepository(this.db) : habitDao = HabitDao(db);
 
   Stream<List<HabitStatus>> getTodayHabits() async* {
-    final rows = await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['day']);
-    final statuses = rows.map((row) {
-      double completionRate = 0;
-      if (row['current_progress'] != null && row['target_progress'] != null) {
-        completionRate = (row['current_progress'] as int) / (row['target_progress'] as int);
-      }
-      return HabitStatus(habit: habitFromMap(row), completionRate: completionRate);
-    }).toList();
+    final rows =
+        await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['day']);
+    final statuses = rows
+        .map((map) => HabitStatus(
+            habit: habitFromMap(map),
+            completionRate: completionRateFromMap(map)))
+        .toList();
     yield statuses;
   }
 
@@ -46,12 +45,19 @@ Habit habitFromMap(Map<String, Object?> map) => Habit(
     name: map[Columns.habit.name] as String,
     iconName: map[Columns.habit.iconName] as String);
 
+double completionRateFromMap(Map<String, Object?> map) {
+  int currentProgress = map['current_progress'] as int;
+  int targetProgress = map['target_value'] as int;
+  return currentProgress / targetProgress;
+}
+
 extension GoalPersistence on Goal {
   Map<String, Object?> toMap(int habitId) => {
         Columns.goal.habitId: habitId,
         Columns.goal.timeframe: _serializeTimeframe(),
         Columns.goal.targetValue: targetProgress,
         Columns.goal.type: _serializeType(),
+        // TODO: leave it to the database
         Columns.goal.assignmentDate: generateUnixEpochTimestamp(),
       };
 
