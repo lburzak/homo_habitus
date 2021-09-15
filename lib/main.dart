@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'data/app_database.dart';
+import 'data/reactive_database.dart';
 import 'page/habit_page.dart';
 import 'page/home_page.dart';
 
@@ -19,14 +20,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Database>(
-      future: openAppDatabase(),
+    return FutureBuilder<ReactiveDatabase>(
+      future: ReactiveDatabase.open(),
       builder: (context, snapshot) => snapshot.hasData
-          ? Provider<Database>.value(
+          ? Provider<ReactiveDatabase>.value(
               value: snapshot.data!,
               child: RepositoryProvider(
                 create: (context) =>
-                    HabitRepository(context.read<Database>()),
+                    HabitRepository(context.read<ReactiveDatabase>()),
                 child: MaterialApp(
                   debugShowCheckedModeBanner: false,
                   title: 'Homo Habitus',

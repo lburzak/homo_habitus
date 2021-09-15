@@ -16,12 +16,31 @@ class ReactiveDatabase {
       ReactiveDatabase.wrap(await openAppDatabase());
 
   Future<int> insert(String table, Map<String, Object?> map,
-      {List<DataEvent>? events}) async {
+      {DataEvent? event, List<DataEvent>? events}) async {
     final result = await _db.insert(table, map);
+
+    if (event != null) {
+      _events.add(event);
+    }
 
     events?.forEach(_events.add);
 
     return result;
+  }
+
+  Future<List<Object?>> commitBatch(Batch batch, DataEvent? event) async {
+    final result = await batch.commit();
+
+    _events.add(event!);
+
+    return result;
+  }
+
+  Batch batch() => _db.batch();
+
+  Future<List<Map<String, Object?>>> rawQuery(String sql,
+      [List<Object?>? arguments]) async {
+    return await _db.rawQuery(sql, arguments);
   }
 }
 

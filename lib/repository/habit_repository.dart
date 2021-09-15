@@ -1,28 +1,32 @@
 import 'package:homo_habitus/data/database_schema.dart';
-import 'package:homo_habitus/data/habit_dao.dart';
+import 'package:homo_habitus/data/reactive_database.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/habit_progress.dart';
 import 'package:homo_habitus/model/habit_status.dart';
 import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/util/datetime.dart';
-import 'package:sqflite/sqflite.dart';
 
 class HabitRepository {
-  final HabitDao habitDao;
-  final Database db;
+  final ReactiveDatabase db;
 
-  HabitRepository(this.db) : habitDao = HabitDao(db);
+  HabitRepository(this.db);
 
-  Stream<List<HabitStatus>> getTodayHabits() async* {
+  Future<List<HabitStatus>> getTodayHabits() async {
     final rows =
         await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['day']);
-    final statuses = rows
-        .map((map) => HabitStatus(
-            habit: habitFromMap(map),
-            completionRate: completionRateFromMap(map)))
+    return rows
+        .map((row) => HabitStatus(
+            habit: habitFromMap(row),
+            completionRate: completionRateFromMap(row)))
         .toList();
-    yield statuses;
+  }
+
+  Stream<List<HabitStatus>> watchTodayHabits() async* {
+    yield await getTodayHabits();
+    yield* db.events
+      .where((event) => event is HabitCreatedEvent)
+      .asyncMap((event) => getTodayHabits());
   }
 
   GoalProgress getProgressByHabitId(int habitId) {
@@ -30,8 +34,10 @@ class HabitRepository {
   }
 
   Future<void> createHabit(Habit habit, Goal initialGoal) async {
-    int habitId = await habitDao.insert(habit);
-    await db.insert(Tables.goal, initialGoal.toMap(habitId));
+    int habitId = await db.insert(Tables.habit, habit.toMap());
+    await db.insert(Tables.goal, initialGoal.toMap(habitId),
+        event:
+            HabitCreatedEvent(createdHabit: habit, createdGoal: initialGoal));
   }
 }
 
