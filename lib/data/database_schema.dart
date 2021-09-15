@@ -31,7 +31,7 @@ class GoalColumns {
 
   String get timeframe => 'timeframe';
 
-  String get assignmentDate => 'assignmentDate';
+  String get assignmentDate => 'assignment_date';
 }
 
 class GoalTypeColumns {
@@ -86,7 +86,7 @@ class Queries {
 
   static final String createGoalTable = '''
   create table ${Tables.goal} (
-    ${Columns.goal.id} integer primary key,
+    ${Columns.goal.id} integer primary key autoincrement,
     ${Columns.goal.habitId} integer,
     ${Columns.goal.targetValue} integer,
     ${Columns.goal.type} text,
@@ -138,5 +138,68 @@ class Queries {
     left join ${Tables.timeframe}
       on ${Tables.goal}.${Columns.goal.timeframe} = ${Tables.timeframe}.${Columns.timeframe.name}
   where ${Tables.timeframe}.${Columns.timeframe.name} = ?
+  ''';
+
+  static final String selectCurrentProgressByHabitId = '''
+  select sum(${Tables.progress}.${Columns.progress.value}), ${Tables.goal}.${Columns.goal.targetValue}
+  from ${Tables.goal}
+  inner join ${Tables.progress}
+    on ${Tables.progress}.${Columns.progress.goalId} = ${Tables.goal}.${Columns.goal.id}
+  inner join ${Tables.timeframe}
+    on ${Tables.goal}.${Columns.goal.timeframe} = ${Tables.timeframe}.${Columns.timeframe.name}
+  where ${Tables.goal}.${Columns.goal.habitId} = (
+    select ${Tables.goal}.${Columns.goal.habitId}
+    from ${Tables.goal}
+    inner join ${Tables.habit} on ${Tables.habit}.${Columns.habit.id} = ${Tables.goal}.${Columns.goal.habitId}
+    where ${Tables.goal}.${Columns.goal.habitId} = ?
+    order by ${Tables.goal}.${Columns.goal.assignmentDate} desc
+    limit 1
+  )
+  and ${Tables.progress}.${Columns.progress.timestamp} >= (
+    case ${Tables.timeframe}.${Columns.timeframe.name}
+      when '${Values.timeframe.day}' then
+        strftime('%s', 'now', 'start of day')
+      when '${Values.timeframe.week}' then
+        strftime('%s', 'now', 'weekday 1', '-7 days', 'start of day')
+      else
+        strftime('%s', 'now', 'start of month')
+    end
+  );
+  ''';
+
+  static const String selectHabitsStatusesByTimeframe = '''
+  select habit.*, current_goal.*, sum(applicable_progress.value) as current_progress
+  from habit
+  left join (
+    select goal.*
+    from habit
+    inner join goal
+      on goal.habit_id = habit.id
+    group by habit.id
+    order by goal.assignment_date desc
+    limit 1
+  ) as current_goal
+    on current_goal.habit_id = habit.id
+  left join timeframe
+    on current_goal.timeframe = timeframe.name
+  left join (
+    select *
+    from progress
+    inner join goal
+      on goal.id = progress.goal_id
+    where progress.timestamp >= (
+    case goal.timeframe
+      when 'day' then
+      strftime('%s', '2021-09-10 23:59:59', 'start of day')
+      when 'week' then
+      strftime('%s', '2021-09-10 23:59:59', 'weekday 1', '-7 days', 'start of day')
+      else
+      strftime('%s', '2021-09-19 23:59:59', 'start of month')
+    end
+    )
+  ) as applicable_progress
+  on applicable_progress.goal_id = current_goal.id
+  where timeframe.name = ?
+  group by habit.id
   ''';
 }

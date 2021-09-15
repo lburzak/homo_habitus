@@ -14,12 +14,17 @@ class HabitRepository {
 
   HabitRepository(this.db) : habitDao = HabitDao(db);
 
-  Stream<List<HabitStatus>> getTodayHabits() =>
-      habitDao.rawWatch(Queries.selectHabitsByTimeframe, arguments: [
-        Values.timeframe.day
-      ]).map((habits) => habits
-          .map((habit) => HabitStatus(habit: habit, completionRate: 0.7))
-          .toList());
+  Stream<List<HabitStatus>> getTodayHabits() async* {
+    final rows = await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['day']);
+    final statuses = rows.map((row) {
+      double completionRate = 0;
+      if (row['current_progress'] != null && row['target_progress'] != null) {
+        completionRate = (row['current_progress'] as int) / (row['target_progress'] as int);
+      }
+      return HabitStatus(habit: habitFromMap(row), completionRate: completionRate);
+    }).toList();
+    yield statuses;
+  }
 
   GoalProgress getProgressByHabitId(int habitId) {
     return TimerGoalProgress(3000, 60000);
