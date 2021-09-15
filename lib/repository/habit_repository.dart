@@ -25,8 +25,10 @@ class HabitRepository {
   Stream<List<HabitStatus>> watchTodayHabits() async* {
     yield await getTodayHabits();
     yield* db.events
-      .where((event) => event is HabitCreatedEvent)
-      .asyncMap((event) => getTodayHabits());
+        .where((event) =>
+            event is HabitCreatedEvent &&
+            event.createdGoal.timeframe == Timeframe.day)
+        .asyncMap((event) => getTodayHabits());
   }
 
   GoalProgress getProgressByHabitId(int habitId) {
