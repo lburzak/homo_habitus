@@ -171,13 +171,11 @@ class Queries {
   select habit.*, current_goal.*, ifnull(sum(applicable_progress.value), 0) as current_progress
   from habit
   left join (
-    select goal.*
+    select goal.*, max(goal.assignment_date)
     from habit
     inner join goal
       on goal.habit_id = habit.id
     group by habit.id
-    order by goal.assignment_date desc
-    limit 1
   ) as current_goal
     on current_goal.habit_id = habit.id
   left join timeframe
