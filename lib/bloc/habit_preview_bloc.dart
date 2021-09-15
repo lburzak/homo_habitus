@@ -8,7 +8,6 @@ import 'package:homo_habitus/model/habit_status.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 
 part 'habit_preview_event.dart';
-
 part 'habit_preview_state.dart';
 
 class HabitPreviewBloc extends Bloc<HabitPreviewEvent, HabitPreviewState> {
@@ -24,12 +23,18 @@ class HabitPreviewBloc extends Bloc<HabitPreviewEvent, HabitPreviewState> {
     HabitPreviewEvent event,
   ) async* {
     if (event is HabitPreviewInitialized) {
-      final progress = habitRepository.getProgressByHabitId(state.habit.id);
+      final progress =
+          await habitRepository.getProgressByHabitId(state.habit.id);
       if (progress is TimerGoalProgress) {
         yield HabitPreviewTimerStopped(
             habit: state.habit,
             millisecondsPassed: progress.millisecondsPassed,
             targetMilliseconds: progress.targetMilliseconds);
+      } else if (progress is CounterGoalProgress) {
+        yield HabitPreviewCounter(
+            habit: state.habit,
+            currentCount: progress.currentCount,
+            targetCount: progress.targetCount);
       }
     }
   }
