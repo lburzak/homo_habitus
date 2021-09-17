@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_preview_bloc.dart';
 import 'package:homo_habitus/model/habit_status.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/repository/progress_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/round_button.dart';
@@ -25,7 +24,6 @@ class HabitPage extends StatelessWidget {
     return BlocProvider(
         create: (BuildContext context) => HabitPreviewBloc(
             args.habitStatus,
-            context.read<HabitRepository>(),
             context.read<ProgressRepository>()),
         child: const HabitPreview());
   }
