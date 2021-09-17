@@ -14,6 +14,14 @@ class ProgressRepository {
     db.emitEvent(ProgressChangedEvent(affectedHabitId: habitId));
   }
 
+  Stream<GoalProgress> watchProgressByHabitId(int habitId) async* {
+    yield await getProgressByHabitId(habitId);
+    yield* db.events
+        .where((event) =>
+            event is ProgressChangedEvent && event.affectedHabitId == habitId)
+        .asyncMap((event) => getProgressByHabitId(habitId));
+  }
+
   Future<GoalProgress> getProgressByHabitId(int habitId) =>
       db.rawQuery(Queries.getProgressByHabitId, [habitId]).then(
           (map) => goalProgressFromMap(map.first));
