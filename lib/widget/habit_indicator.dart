@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:homo_habitus/model/habit_status.dart';
 import 'package:homo_habitus/repository/progress_repository.dart';
 import 'package:homo_habitus/widget/round_indicator.dart';
-import 'package:provider/src/provider.dart';
+import 'package:provider/provider.dart';
 
 class HabitIndicator extends StatefulWidget {
   const HabitIndicator(
