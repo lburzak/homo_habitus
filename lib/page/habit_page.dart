@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_preview_bloc.dart';
 import 'package:homo_habitus/model/habit_status.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
+import 'package:homo_habitus/repository/progress_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/round_button.dart';
 
@@ -22,7 +23,10 @@ class HabitPage extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as HabitPageArguments;
 
     return BlocProvider(
-        create: (BuildContext context) => HabitPreviewBloc(args.habitStatus, context.read<HabitRepository>()),
+        create: (BuildContext context) => HabitPreviewBloc(
+            args.habitStatus,
+            context.read<HabitRepository>(),
+            context.read<ProgressRepository>()),
         child: const HabitPreview());
   }
 }
@@ -75,7 +79,11 @@ class HabitPreview extends StatelessWidget {
                         height: 64,
                         child: RoundButton(
                           icon: Icons.add,
-                          onPressed: () {},
+                          onPressed: () {
+                            context
+                                .read<HabitPreviewBloc>()
+                                .add(HabitPreviewCounterIncremented());
+                          },
                         )),
                     RoundButton(
                       icon: Icons.exposure_plus_2,

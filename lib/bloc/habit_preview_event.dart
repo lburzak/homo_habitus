@@ -8,3 +8,8 @@ class HabitPreviewInitialized extends HabitPreviewEvent {
   @override
   List<Object?> get props => [];
 }
+
+class HabitPreviewCounterIncremented extends HabitPreviewEvent {
+  @override
+  List<Object?> get props => [];
+}
