@@ -115,7 +115,7 @@ class Queries {
     ${Columns.progress.id} integer primary key autoincrement,
     ${Columns.progress.goalId} integer,
     ${Columns.progress.value} integer,
-    ${Columns.progress.timestamp} integer,
+    ${Columns.progress.timestamp} integer default (strftime('%s', 'now')),
     
     foreign key(${Columns.progress.goalId}) references ${Tables.goal}(${Columns.goal.id})
   ) 
@@ -236,5 +236,20 @@ class Queries {
   on applicable_progress.goal_id = current_goal.id
   where habit.id = ?
   group by habit.id
+  ''';
+
+  static const addProgressToCurrentGoal = '''
+  insert into progress (goal_id, value) values (
+	(
+    select goal.id
+    from habit
+    inner join goal
+      on goal.habit_id = habit.id
+    where habit.id = ?
+    group by habit.id
+    having goal.id = max(goal.id)
+	),
+	?
+  )
   ''';
 }

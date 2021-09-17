@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
                   RepositoryProvider(
                       create: (context) =>
                           HabitRepository(context.read<ReactiveDatabase>())),
-                  RepositoryProvider(create: (context) => ProgressRepository()),
+                  RepositoryProvider(create: (context) => ProgressRepository(context.read<ReactiveDatabase>())),
                 ],
                 child: MaterialApp(
                   debugShowCheckedModeBanner: false,

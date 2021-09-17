@@ -42,6 +42,10 @@ class ReactiveDatabase {
       [List<Object?>? arguments]) async {
     return await _db.rawQuery(sql, arguments);
   }
+
+  void emitEvent(DataEvent event) {
+    _events.add(event);
+  }
 }
 
 class DataEvent {}
@@ -51,4 +55,10 @@ class HabitCreatedEvent extends DataEvent {
   Goal createdGoal;
 
   HabitCreatedEvent({required this.createdHabit, required this.createdGoal});
+}
+
+class ProgressChangedEvent extends DataEvent {
+  final int affectedHabitId;
+
+  ProgressChangedEvent({required this.affectedHabitId});
 }

@@ -40,7 +40,7 @@ class HabitPreviewBloc extends Bloc<HabitPreviewEvent, HabitPreviewState> {
             targetCount: progress.targetCount);
       }
     } else if (event is HabitPreviewCounterIncremented) {
-      progressRepository.addProgress(state.habit.id, 1);
+      await progressRepository.addProgress(state.habit.id, 1);
     }
   }
 }
