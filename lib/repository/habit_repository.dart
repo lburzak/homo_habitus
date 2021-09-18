@@ -37,6 +37,11 @@ class HabitRepository {
     await db.insert(Tables.goal, goal.toMap(habitId),
         event: HabitCreatedEvent(createdGoal: goal));
   }
+
+  Future<Habit> getHabitById(int id) async {
+    final map = await db.rawQuery(Queries.selectHabitById, [id]);
+    return habitFromMap(map.first);
+  }
 }
 
 extension HabitPersistence on Habit {

@@ -252,4 +252,38 @@ class Queries {
 	?
   )
   ''';
+
+  static const selectHabitById = '''
+  select habit.*, current_goal.*, ifnull(sum(applicable_progress.value), 0) as current_progress
+  from habit
+  left join (
+    select goal.*, max(goal.assignment_date)
+    from habit
+    inner join goal
+      on goal.habit_id = habit.id
+    group by habit.id
+  ) as current_goal
+    on current_goal.habit_id = habit.id
+  left join timeframe
+    on current_goal.timeframe = timeframe.name
+  left join (
+    select *
+    from progress
+    inner join goal
+      on goal.id = progress.goal_id
+    where progress.timestamp >= (
+    case goal.timeframe
+      when 'day' then
+      strftime('%s', '2021-09-10 23:59:59', 'start of day')
+      when 'week' then
+      strftime('%s', '2021-09-10 23:59:59', 'weekday 1', '-7 days', 'start of day')
+      else
+      strftime('%s', '2021-09-19 23:59:59', 'start of month')
+    end
+    )
+  ) as applicable_progress
+  on applicable_progress.goal_id = current_goal.id
+  where habit.id = ?
+  group by habit.id
+  ''';
 }
