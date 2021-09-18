@@ -12,10 +12,10 @@ part 'habit_preview_state.dart';
 class HabitPreviewBloc extends Bloc<HabitPreviewEvent, HabitPreviewState> {
   final ProgressRepository _progressRepository;
 
-  HabitPreviewBloc(
-      int habitId, HabitRepository habitRepository, this._progressRepository)
-      : super(HabitPreviewInitial()) {
-    habitRepository.watchHabit(habitId).listen((habit) {
+  HabitPreviewBloc(HabitRepository habitRepository, this._progressRepository,
+      {required Habit initialHabit})
+      : super(HabitPreviewState(initialHabit)) {
+    habitRepository.watchHabit(initialHabit.id).listen((habit) {
       add(HabitChanged(habit));
     });
   }
@@ -25,11 +25,10 @@ class HabitPreviewBloc extends Bloc<HabitPreviewEvent, HabitPreviewState> {
     HabitPreviewEvent event,
   ) async* {
     final state = this.state;
-    if (event is HabitPreviewCounterIncremented &&
-        state is HabitPreviewLoaded) {
+    if (event is HabitPreviewCounterIncremented) {
       await _progressRepository.addProgress(state.habit.id, 1);
     } else if (event is HabitChanged) {
-      yield HabitPreviewLoaded(event.newHabit);
+      yield HabitPreviewState(event.newHabit);
     }
   }
 }

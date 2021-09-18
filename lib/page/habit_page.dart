@@ -25,9 +25,8 @@ class HabitPage extends StatelessWidget {
 
     return BlocProvider(
         create: (BuildContext context) => HabitPreviewBloc(
-            args.habit.id,
-            context.read<HabitRepository>(),
-            context.read<ProgressRepository>()),
+            context.read<HabitRepository>(), context.read<ProgressRepository>(),
+            initialHabit: args.habit),
         child: HabitPreview(initialHabit: args.habit));
   }
 }
@@ -41,10 +40,8 @@ class HabitPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<HabitPreviewBloc, HabitPreviewState>(
-          builder: (context, state) =>
-              Text(state is HabitPreviewLoaded ? state.habit.name : ""),
-        ),
+        title: Text(
+            context.select((HabitPreviewBloc bloc) => bloc.state.habit.name)),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -53,14 +50,11 @@ class HabitPreview extends StatelessWidget {
             child: FractionallySizedBox(
               widthFactor: 0.7,
               child: Center(
-                child: BlocBuilder<HabitPreviewBloc, HabitPreviewState>(
-                  builder: (context, state) => HabitIndicator(
-                    habit: state is HabitPreviewLoaded
-                        ? state.habit
-                        : initialHabit,
-                    progressStrokeWidth: 8,
-                    iconSize: 120,
-                  ),
+                child: HabitIndicator(
+                  habit: context
+                      .select((HabitPreviewBloc bloc) => bloc.state.habit),
+                  progressStrokeWidth: 8,
+                  iconSize: 120,
                 ),
               ),
             ),
@@ -113,21 +107,19 @@ class ProgressCounter extends StatelessWidget {
   Widget build(BuildContext context) =>
       BlocBuilder<HabitPreviewBloc, HabitPreviewState>(
           builder: (context, state) {
-        var current = "";
+            var current = "";
         var target = "";
 
-        if (state is HabitPreviewLoaded) {
-          final progress = state.habit.progress;
+        final progress = state.habit.progress;
 
-          if (progress is CounterGoalProgress) {
-            current = progress.currentCount.toString();
-            target = progress.targetCount.toString();
-          } else if (progress is TimerGoalProgress) {
-            current = Duration(milliseconds: progress.millisecondsPassed)
-                .formatCounterDuration();
-            target = Duration(milliseconds: progress.targetMilliseconds)
-                .formatCounterDuration();
-          }
+        if (progress is CounterGoalProgress) {
+          current = progress.currentCount.toString();
+          target = progress.targetCount.toString();
+        } else if (progress is TimerGoalProgress) {
+          current = Duration(milliseconds: progress.millisecondsPassed)
+              .formatCounterDuration();
+          target = Duration(milliseconds: progress.targetMilliseconds)
+              .formatCounterDuration();
         }
 
         return Row(
