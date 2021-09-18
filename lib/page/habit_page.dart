@@ -50,7 +50,7 @@ class HabitPreview extends StatelessWidget {
             child: FractionallySizedBox(
               widthFactor: 0.7,
               child: Center(
-                child: HabitIndicator(
+                child: AnimatedHabitIndicator(
                   habit: context
                       .select((HabitPreviewBloc bloc) => bloc.state.habit),
                   progressStrokeWidth: 8,
