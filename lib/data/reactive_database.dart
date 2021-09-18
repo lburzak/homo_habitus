@@ -1,6 +1,5 @@
 import 'package:homo_habitus/data/app_database.dart';
 import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/habit.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -51,10 +50,9 @@ class ReactiveDatabase {
 class DataEvent {}
 
 class HabitCreatedEvent extends DataEvent {
-  Habit createdHabit;
   Goal createdGoal;
 
-  HabitCreatedEvent({required this.createdHabit, required this.createdGoal});
+  HabitCreatedEvent({required this.createdGoal});
 }
 
 class ProgressChangedEvent extends DataEvent {

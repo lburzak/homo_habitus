@@ -2,15 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_preview_bloc.dart';
-import 'package:homo_habitus/model/habit_status.dart';
+import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/repository/progress_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/round_button.dart';
 
 class HabitPageArguments {
-  final HabitStatus habitStatus;
+  final Habit habit;
 
-  const HabitPageArguments(this.habitStatus);
+  const HabitPageArguments(this.habit);
 }
 
 class HabitPage extends StatelessWidget {
@@ -22,9 +22,8 @@ class HabitPage extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as HabitPageArguments;
 
     return BlocProvider(
-        create: (BuildContext context) => HabitPreviewBloc(
-            args.habitStatus,
-            context.read<ProgressRepository>()),
+        create: (BuildContext context) =>
+            HabitPreviewBloc(args.habit, context.read<ProgressRepository>()),
         child: const HabitPreview());
   }
 }
@@ -47,10 +46,8 @@ class HabitPreview extends StatelessWidget {
               widthFactor: 0.7,
               child: Center(
                 child: HabitIndicator(
-                  habitStatus: context.select((HabitPreviewBloc bloc) =>
-                      HabitStatus(
-                          completionRate: bloc.state.completionRate,
-                          habit: bloc.state.habit)),
+                  habit: context
+                      .select((HabitPreviewBloc bloc) => bloc.state.habit),
                   progressStrokeWidth: 8,
                   iconSize: 120,
                 ),

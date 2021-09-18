@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homo_habitus/model/habit_status.dart';
+import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
             ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-              sliver: StreamBuilder<List<HabitStatus>>(
+              sliver: StreamBuilder<List<Habit>>(
                 stream: context.read<HabitRepository>().watchTodayHabits(),
                 builder: (context, snapshot) => snapshot.hasData
                     ? SliverGrid(
@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                                         context, snapshot.requireData[index]);
                                   },
                                   child: HabitIndicator(
-                                      habitStatus: snapshot.requireData[index]),
+                                      habit: snapshot.requireData[index]),
                                 ),
                             childCount: snapshot.requireData.length),
                         gridDelegate:
@@ -59,9 +59,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _openHabitScreen(BuildContext context, HabitStatus habitStatus) {
+  void _openHabitScreen(BuildContext context, Habit habit) {
     Navigator.pushNamed(context, "/habit",
-        arguments: HabitPageArguments(habitStatus));
+        arguments: HabitPageArguments(habit));
   }
 
   void _openNewHabitScreen(BuildContext context) {

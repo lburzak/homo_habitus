@@ -11,8 +11,8 @@ abstract class HabitPreviewState extends Equatable {
 }
 
 class HabitPreviewInitial extends HabitPreviewState {
-  HabitPreviewInitial.fromStatus(HabitStatus status)
-      : super(status.habit, status.completionRate);
+  HabitPreviewInitial(Habit habit)
+      : super(habit, habit.progress.completionRate);
 }
 
 class HabitPreviewCounter extends HabitPreviewState {

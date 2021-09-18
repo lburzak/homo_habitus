@@ -25,19 +25,6 @@ class ProgressRepository {
   Future<GoalProgress> getProgressByHabitId(int habitId) =>
       db.rawQuery(Queries.getProgressByHabitId, [habitId]).then(
           (map) => goalProgressFromMap(map.first));
-
-  GoalProgress goalProgressFromMap(Map<String, Object?> map) {
-    String type = map['type'] as String;
-    int currentProgress = map['current_progress'] as int;
-    int targetProgress = map['target_value'] as int;
-
-    switch (decodeGoalType(type)) {
-      case GoalType.counter:
-        return CounterGoalProgress(currentProgress, targetProgress);
-      case GoalType.timer:
-        return TimerGoalProgress(currentProgress, targetProgress);
-    }
-  }
 }
 
 GoalType decodeGoalType(String serialized) {
@@ -48,5 +35,18 @@ GoalType decodeGoalType(String serialized) {
       return GoalType.counter;
     default:
       throw Exception("Unexpected goal type: $serialized");
+  }
+}
+
+GoalProgress goalProgressFromMap(Map<String, Object?> map) {
+  String type = map['type'] as String;
+  int currentProgress = map['current_progress'] as int;
+  int targetProgress = map['target_value'] as int;
+
+  switch (decodeGoalType(type)) {
+    case GoalType.counter:
+      return CounterGoalProgress(currentProgress, targetProgress);
+    case GoalType.timer:
+      return TimerGoalProgress(currentProgress, targetProgress);
   }
 }

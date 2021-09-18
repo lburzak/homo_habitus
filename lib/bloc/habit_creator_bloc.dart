@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
@@ -61,14 +60,13 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
     } else if (event is HabitCreatorIconChanged) {
       yield state.copyWith(icon: event.icon);
     } else if (event is HabitCreatorSubmitted) {
-      final habit = Habit(id: 0, iconName: state.icon.name, name: state.name);
-
       final goal = Goal(
           timeframe: state.timeframe,
           type: state.goalType,
           targetProgress: state.targetProgress);
 
-      await habitRepository.createHabit(habit, goal);
+      await habitRepository.createHabit(
+          name: state.name, icon: state.icon, goal: goal);
       yield state.copyWith(finished: true);
     }
   }
