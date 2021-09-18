@@ -4,12 +4,16 @@ abstract class HabitPreviewEvent extends Equatable {
   const HabitPreviewEvent();
 }
 
-class HabitPreviewInitialized extends HabitPreviewEvent {
+class HabitPreviewCounterIncremented extends HabitPreviewEvent {
   @override
   List<Object?> get props => [];
 }
 
-class HabitPreviewCounterIncremented extends HabitPreviewEvent {
+class HabitChanged extends HabitPreviewEvent {
+  final Habit newHabit;
+
+  const HabitChanged(this.newHabit);
+
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [newHabit];
 }

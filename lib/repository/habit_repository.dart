@@ -1,87 +1,71 @@
-import 'package:homo_habitus/data/database_schema.dart';
-import 'package:homo_habitus/data/reactive_database.dart';
+import 'dart:async';
+
+import 'package:homo_habitus/data/data_event.dart';
+import 'package:homo_habitus/data/habit_dao.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
-import 'package:homo_habitus/model/timeframe.dart';
-import 'package:homo_habitus/repository/progress_repository.dart';
-import 'package:homo_habitus/util/datetime.dart';
+import 'package:rxdart/rxdart.dart';
 
 class HabitRepository {
-  final ReactiveDatabase db;
+  final HabitDao _habitDao;
+  final DataEventBus _dataEventBus;
+  List<Habit> habitsCache = [];
+  StreamSubscription? habitsUpdateSubscription;
 
-  HabitRepository(this.db);
+  HabitRepository(this._habitDao, this._dataEventBus);
 
-  Future<List<Habit>> getTodayHabits() async {
-    final rows =
-        await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['day']);
-    return rows.map((row) => habitFromMap(row)).toList();
-  }
+  Stream<DataEvent> get _events => _dataEventBus.events;
 
-  Stream<List<Habit>> watchTodayHabits() async* {
-    yield await getTodayHabits();
-    yield* db.events
-        .where((event) =>
-            event is HabitCreatedEvent &&
-            event.createdGoal.timeframe == Timeframe.day)
-        .asyncMap((event) => getTodayHabits());
+  late final Subject<List<Habit>> _allHabits = BehaviorSubject.seeded([],
+      onListen: _onListSubscription, onCancel: _onListSubscriptionCancel);
+
+  Stream<List<Habit>> get allHabits => _allHabits.stream;
+
+  Stream<Habit> watchHabit(int id) async* {
+    final cacheIndex = habitsCache.indexWhere((element) => element.id == id);
+
+    if (cacheIndex != -1) {
+      yield habitsCache[cacheIndex];
+    } else {
+      yield await _habitDao.getHabitById(id);
+    }
+
+    yield* _events
+        .where((event) => event is HabitChangedEvent && event.habitId == id)
+        .asyncMap((event) => _habitDao.getHabitById(id));
   }
 
   Future<void> createHabit(
       {required String name,
       required IconAsset icon,
       required Goal goal}) async {
-    int habitId = await db.insert(Tables.habit,
-        {Columns.habit.name: name, Columns.habit.iconName: icon.name});
-
-    await db.insert(Tables.goal, goal.toMap(habitId),
-        event: HabitCreatedEvent(createdGoal: goal));
+    _habitDao.createHabit(name: name, icon: icon, goal: goal);
+    _emit(HabitCreatedEvent());
   }
 
-  Future<Habit> getHabitById(int id) async {
-    final map = await db.rawQuery(Queries.selectHabitById, [id]);
-    return habitFromMap(map.first);
-  }
-}
-
-extension HabitPersistence on Habit {
-  Map<String, Object?> toMap() =>
-      {Columns.habit.name: name, Columns.habit.iconName: iconName};
-}
-
-Habit habitFromMap(Map<String, Object?> map) => Habit(
-    id: map[Columns.habit.id] as int,
-    name: map[Columns.habit.name] as String,
-    iconName: map[Columns.habit.iconName] as String,
-    progress: goalProgressFromMap(map));
-
-extension GoalPersistence on Goal {
-  Map<String, Object?> toMap(int habitId) => {
-        Columns.goal.habitId: habitId,
-        Columns.goal.timeframe: _serializeTimeframe(),
-        Columns.goal.targetValue: targetProgress,
-        Columns.goal.type: _serializeType(),
-        // TODO: leave it to the database
-        Columns.goal.assignmentDate: generateUnixEpochTimestamp(),
-      };
-
-  String _serializeTimeframe() {
-    switch (timeframe) {
-      case Timeframe.day:
-        return 'day';
-      case Timeframe.week:
-        return 'week';
-      case Timeframe.month:
-        return 'month';
-    }
+  void _emit(DataEvent event) {
+    _dataEventBus.emit(event);
   }
 
-  String _serializeType() {
-    switch (type) {
-      case GoalType.timer:
-        return 'timer';
-      case GoalType.counter:
-        return 'counter';
-    }
+  void _onListSubscription() async {
+    _habitDao.getTodayHabits().then(_updateList);
+
+    habitsUpdateSubscription = _events
+        .where(
+            (event) => event is HabitCreatedEvent || event is HabitChangedEvent)
+        .asyncMap((event) => _habitDao.getTodayHabits())
+        .listen((habits) {
+      _updateList(habits);
+    });
+  }
+
+  void _onListSubscriptionCancel() {
+    habitsUpdateSubscription?.cancel();
+  }
+
+  void _updateList(List<Habit> newList) {
+    habitsCache = newList;
+    _allHabits.add(newList);
   }
 }
