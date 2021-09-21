@@ -8,6 +8,7 @@ import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/repository/progress_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/round_button.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class HabitPageArguments {
   final Habit habit;
@@ -16,7 +17,7 @@ class HabitPageArguments {
 }
 
 class HabitPage extends StatelessWidget {
-  const HabitPage({Key? key}) : super(key: key);
+  HabitPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,26 @@ class HabitPage extends StatelessWidget {
         create: (BuildContext context) => HabitPreviewBloc(
             context.read<HabitRepository>(), context.read<ProgressRepository>(),
             initialHabit: args.habit),
-        child: HabitPreview(initialHabit: args.habit));
+        child: HabitPageBody(initialHabit: args.habit));
+  }
+}
+
+class HabitPageBody extends StatelessWidget {
+  HabitPageBody({
+    Key? key,
+    required this.initialHabit,
+  }) : super(key: key);
+
+  final Habit initialHabit;
+
+  final PageController _controller = PageController(initialPage: 0);
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView(
+        controller: _controller,
+        scrollDirection: Axis.horizontal,
+        children: [HabitPreview(initialHabit: initialHabit), HabitLogs()]);
   }
 }
 
@@ -37,67 +57,110 @@ class HabitPreview extends StatelessWidget {
   final Habit initialHabit;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            context.select((HabitPreviewBloc bloc) => bloc.state.habit.name)),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            child: FractionallySizedBox(
-              widthFactor: 0.7,
-              child: Center(
-                child: AnimatedHabitIndicator(
-                  habit: context
-                      .select((HabitPreviewBloc bloc) => bloc.state.habit),
-                  progressStrokeWidth: 8,
-                  iconSize: 120,
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text(
+              context.select((HabitPreviewBloc bloc) => bloc.state.habit.name)),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: FractionallySizedBox(
+                widthFactor: 0.7,
+                child: Center(
+                  child: AnimatedHabitIndicator(
+                    habit: context
+                        .select((HabitPreviewBloc bloc) => bloc.state.habit),
+                    progressStrokeWidth: 8,
+                    iconSize: 120,
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 48.0),
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: ProgressCounter(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 48.0),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: ProgressCounter(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      RoundButton(
+                        icon: Icons.remove,
+                        onPressed: () {},
+                      ),
+                      SizedBox(
+                          width: 64,
+                          height: 64,
+                          child: RoundButton(
+                            icon: Icons.add,
+                            onPressed: () {
+                              context
+                                  .read<HabitPreviewBloc>()
+                                  .add(HabitPreviewCounterIncremented());
+                            },
+                          )),
+                      RoundButton(
+                        icon: Icons.exposure_plus_2,
+                        onPressed: () {},
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+}
+
+class HabitLogs extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: Column(
+          children: [
+            Material(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: TableCalendar(
+                  firstDay: DateTime.utc(2010, 10, 16),
+                  lastDay: DateTime.utc(2030, 3, 14),
+                  focusedDay: DateTime.now(),
+                  calendarStyle: const CalendarStyle(
+                      outsideDaysVisible: false, cellMargin: EdgeInsets.all(2)),
+                  rowHeight: 32,
+                  calendarFormat: CalendarFormat.month,
+                  availableCalendarFormats: const {CalendarFormat.month: ""},
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    RoundButton(
-                      icon: Icons.remove,
-                      onPressed: () {},
-                    ),
-                    SizedBox(
-                        width: 64,
-                        height: 64,
-                        child: RoundButton(
-                          icon: Icons.add,
-                          onPressed: () {
-                            context
-                                .read<HabitPreviewBloc>()
-                                .add(HabitPreviewCounterIncremented());
-                          },
-                        )),
-                    RoundButton(
-                      icon: Icons.exposure_plus_2,
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ],
+              ),
             ),
-          )
-        ],
-      ),
-    );
-  }
+            Expanded(
+              child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(0),
+                  children: [
+                    ListTile(
+                      title: Text("22:30"),
+                    ),
+                    ListTile(
+                      title: Text("22:30"),
+                    ),
+                    ListTile(
+                      title: Text("22:30"),
+                    ),
+                    ListTile(
+                      title: Text("22:30"),
+                    )
+                  ]),
+            )
+          ],
+        ),
+      );
 }
 
 class ProgressCounter extends StatelessWidget {
@@ -107,7 +170,7 @@ class ProgressCounter extends StatelessWidget {
   Widget build(BuildContext context) =>
       BlocBuilder<HabitPreviewBloc, HabitPreviewState>(
           builder: (context, state) {
-            var current = "";
+        var current = "";
         var target = "";
 
         final progress = state.habit.progress;
