@@ -188,11 +188,11 @@ class Queries {
     where progress.timestamp >= (
     case goal.timeframe
       when 'day' then
-      strftime('%s', '2021-09-10 23:59:59', 'start of day')
+      strftime('%s', 'now', 'start of day')
       when 'week' then
-      strftime('%s', '2021-09-10 23:59:59', 'weekday 1', '-7 days', 'start of day')
+      strftime('%s', 'now', 'weekday 1', '-7 days', 'start of day')
       else
-      strftime('%s', '2021-09-19 23:59:59', 'start of month')
+      strftime('%s', 'now', 'start of month')
     end
     )
   ) as applicable_progress
@@ -225,11 +225,11 @@ class Queries {
     where progress.timestamp >= (
     case goal.timeframe
       when 'day' then
-      strftime('%s', '2021-09-10 23:59:59', 'start of day')
+      strftime('%s', 'now', 'start of day')
       when 'week' then
-      strftime('%s', '2021-09-10 23:59:59', 'weekday 1', '-7 days', 'start of day')
+      strftime('%s', 'now', 'weekday 1', '-7 days', 'start of day')
       else
-      strftime('%s', '2021-09-19 23:59:59', 'start of month')
+      strftime('%s', 'now', 'start of month')
     end
     )
   ) as applicable_progress
@@ -274,11 +274,11 @@ class Queries {
     where progress.timestamp >= (
     case goal.timeframe
       when 'day' then
-      strftime('%s', '2021-09-10 23:59:59', 'start of day')
+      strftime('%s', 'now', 'start of day')
       when 'week' then
-      strftime('%s', '2021-09-10 23:59:59', 'weekday 1', '-7 days', 'start of day')
+      strftime('%s', 'now', 'weekday 1', '-7 days', 'start of day')
       else
-      strftime('%s', '2021-09-19 23:59:59', 'start of month')
+      strftime('%s', 'now', 'start of month')
     end
     )
   ) as applicable_progress
