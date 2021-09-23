@@ -36,6 +36,13 @@ class HabitDao {
     return habitFromMap(map.first);
   }
 
+  Future<double> getCompletionPercentageByTimeframe(Timeframe timeframe) async {
+    final result = await db.rawQuery(
+        Queries.selectCompletionPercentageByTimeframe,
+        [serializeTimeframe(timeframe)]);
+    return result.first['completion_percentage'] as double;
+  }
+
   Future<void> createHabit(
       {required String name,
       required IconAsset icon,
@@ -59,26 +66,26 @@ Habit habitFromMap(Map<String, Object?> map) => Habit(
     iconName: map[Columns.habit.iconName] as String,
     progress: goalProgressFromMap(map));
 
+String serializeTimeframe(Timeframe timeframe) {
+  switch (timeframe) {
+    case Timeframe.day:
+      return 'day';
+    case Timeframe.week:
+      return 'week';
+    case Timeframe.month:
+      return 'month';
+  }
+}
+
 extension GoalPersistence on Goal {
   Map<String, Object?> toMap(int habitId) => {
         Columns.goal.habitId: habitId,
-        Columns.goal.timeframe: _serializeTimeframe(),
+        Columns.goal.timeframe: serializeTimeframe(timeframe),
         Columns.goal.targetValue: targetProgress,
         Columns.goal.type: _serializeType(),
         // TODO: leave it to the database
         Columns.goal.assignmentDate: generateUnixEpochTimestamp(),
       };
-
-  String _serializeTimeframe() {
-    switch (timeframe) {
-      case Timeframe.day:
-        return 'day';
-      case Timeframe.week:
-        return 'week';
-      case Timeframe.month:
-        return 'month';
-    }
-  }
 
   String _serializeType() {
     switch (type) {

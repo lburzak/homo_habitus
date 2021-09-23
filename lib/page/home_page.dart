@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homo_habitus/model/habit.dart';
+import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:provider/provider.dart';
@@ -20,13 +21,24 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         child: CustomScrollView(
           slivers: [
-            const SliverSectionLabel("Today"),
+            SliverSectionLabel("Today",
+                completionPercentage: context
+                    .read<HabitRepository>()
+                    .watchCompletionPercentageByTimeframe(Timeframe.day)),
             SliverHabitGrid(
                 habits: context.read<HabitRepository>().watchTodayHabits()),
-            const SliverSectionLabel("This week"),
+            SliverSectionLabel(
+              "This week",
+              completionPercentage: context
+                  .read<HabitRepository>()
+                  .watchCompletionPercentageByTimeframe(Timeframe.week),
+            ),
             SliverHabitGrid(
                 habits: context.read<HabitRepository>().watchThisWeekHabits()),
-            const SliverSectionLabel("This month"),
+            SliverSectionLabel("This month",
+                completionPercentage: context
+                    .read<HabitRepository>()
+                    .watchCompletionPercentageByTimeframe(Timeframe.month)),
             SliverHabitGrid(
                 habits: context.read<HabitRepository>().watchThisMonthHabits())
           ],
@@ -83,9 +95,11 @@ class SliverSectionLabel extends StatelessWidget {
   const SliverSectionLabel(
     this.name, {
     Key? key,
+    required this.completionPercentage,
   }) : super(key: key);
 
   final String name;
+  final Stream<double> completionPercentage;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +107,12 @@ class SliverSectionLabel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
       sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-              (context, index) => SectionLabel(name),
+              (context, index) => StreamBuilder<double>(
+                  stream: completionPercentage,
+                  builder: (context, snapshot) => snapshot.hasData
+                      ? SectionLabel(name,
+                          completionPercentage: snapshot.requireData)
+                      : const CircularProgressIndicator()),
               childCount: 1),
           itemExtent: 30),
     );

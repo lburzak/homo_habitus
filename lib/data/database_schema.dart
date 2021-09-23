@@ -286,4 +286,42 @@ class Queries {
   where habit.id = ?
   group by habit.id
   ''';
+
+  static const selectCompletionPercentageByTimeframe = '''
+  select cast(ifnull(sum(habit_completion_percentage) / count(*), 0) as real) as completion_percentage
+  from (
+  select min(cast(ifnull(sum(applicable_progress.value), 0) as real) / current_goal.target_value, 1) as habit_completion_percentage
+    from habit
+    left join (
+      select goal.habit_id, goal.id, goal.timeframe, goal.target_value
+      from habit
+      inner join goal
+        on goal.habit_id = habit.id
+      group by habit.id
+    having goal.assignment_date = max(goal.assignment_date)
+    ) as current_goal
+      on current_goal.habit_id = habit.id
+    left join timeframe
+      on current_goal.timeframe = timeframe.name
+    left join (
+      select *
+      from progress
+      inner join goal
+        on goal.id = progress.goal_id
+      where progress.timestamp >= (
+      case goal.timeframe
+        when 'day' then
+        strftime('%s', 'now', 'start of day')
+        when 'week' then
+        strftime('%s', 'now', 'weekday 1', '-7 days', 'start of day')
+        else
+        strftime('%s', 'now', 'start of month')
+      end
+      )
+    ) as applicable_progress
+    on applicable_progress.goal_id = current_goal.id
+    where timeframe.name = ?
+    group by habit.id
+  )
+  ''';
 }
