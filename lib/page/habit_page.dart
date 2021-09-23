@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_preview_bloc.dart';
+import 'package:homo_habitus/bloc/progress_calendar_cubit.dart';
+import 'package:homo_habitus/bloc/progress_list_cubit.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/habit_progress.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
@@ -46,8 +48,11 @@ class HabitPageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return PageView(
         controller: _controller,
-        scrollDirection: Axis.horizontal,
-        children: [HabitPreview(initialHabit: initialHabit), HabitLogs()]);
+        scrollDirection: Axis.vertical,
+        children: [
+          HabitPreview(initialHabit: initialHabit),
+          ProgressHistoryPage()
+        ]);
   }
 }
 
@@ -118,7 +123,42 @@ class HabitPreview extends StatelessWidget {
       );
 }
 
-class HabitLogs extends StatelessWidget {
+class CalendarDay extends StatelessWidget {
+  final DateTime day;
+  final bool completed;
+
+  const CalendarDay({Key? key, required this.day, this.completed = false})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+      completed ? _decorateCompleted(_buildLabel()) : _buildLabel();
+
+  Widget _buildLabel() => Center(child: Text(day.day.toString()));
+
+  Widget _decorateCompleted(Widget child) => Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          const Icon(
+            Icons.done,
+            color: Color(0x5522ff22),
+          ),
+          SizedBox.square(
+            dimension: 24,
+            child: Container(
+              decoration: const ShapeDecoration(
+                  shape: CircleBorder(
+                      side: BorderSide(color: Color(0x5522ff22), width: 1))),
+            ),
+          ),
+          child
+        ],
+      );
+}
+
+class ProgressHistoryPage extends StatelessWidget {
+  const ProgressHistoryPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Column(
@@ -127,7 +167,56 @@ class HabitLogs extends StatelessWidget {
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: TableCalendar(
+                child: BlocProvider(
+                  create: (context) => ProgressCalendarCubit(),
+                  child: const ProgressCalendar(),
+                ),
+              ),
+            ),
+            Expanded(
+              child: BlocProvider(
+                create: (context) => ProgressListCubit(),
+                child: const ProgressList(),
+              ),
+            )
+          ],
+        ),
+      );
+}
+
+class ProgressList extends StatelessWidget {
+  const ProgressList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocBuilder<ProgressListCubit, ProgressListState>(
+        builder: (context, state) => state is ProgressListLoaded
+            ? ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(0),
+                children: state.dayProgresses
+                    .map((progress) => ListTile(
+                        title: Text(progress.completionRate.toString())))
+                    .toList())
+            : const CircularProgressIndicator(),
+      );
+}
+
+class ProgressCalendar extends StatelessWidget {
+  const ProgressCalendar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+      BlocBuilder<ProgressCalendarCubit, ProgressCalendarState>(
+        builder: (context, state) {
+          return state is ProgressCalendarLoaded
+              ? TableCalendar(
+                  calendarBuilders: CalendarBuilders(
+                    defaultBuilder: (context, day, focusedDay) => CalendarDay(
+                        day: day, completed: state.checkDayFulfilled(day)),
+                  ),
                   firstDay: DateTime.utc(2010, 10, 16),
                   lastDay: DateTime.utc(2030, 3, 14),
                   focusedDay: DateTime.now(),
@@ -136,30 +225,9 @@ class HabitLogs extends StatelessWidget {
                   rowHeight: 32,
                   calendarFormat: CalendarFormat.month,
                   availableCalendarFormats: const {CalendarFormat.month: ""},
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(0),
-                  children: [
-                    ListTile(
-                      title: Text("22:30"),
-                    ),
-                    ListTile(
-                      title: Text("22:30"),
-                    ),
-                    ListTile(
-                      title: Text("22:30"),
-                    ),
-                    ListTile(
-                      title: Text("22:30"),
-                    )
-                  ]),
-            )
-          ],
-        ),
+                )
+              : const CircularProgressIndicator();
+        },
       );
 }
 
