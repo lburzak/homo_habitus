@@ -20,48 +20,19 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         child: CustomScrollView(
           slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-              sliver: SliverFixedExtentList(
-                  delegate: SliverChildBuilderDelegate(
-                      (context, index) => const SectionLabel(),
-                      childCount: 1),
-                  itemExtent: 30),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-              sliver: StreamBuilder<List<Habit>>(
-                stream: context.read<HabitRepository>().watchAllHabits(),
-                builder: (context, snapshot) => snapshot.hasData
-                    ? SliverGrid(
-                        delegate: SliverChildBuilderDelegate(
-                            (context, index) => InkWell(
-                                  customBorder: const CircleBorder(),
-                                  onTap: () {
-                                    _openHabitScreen(
-                                        context, snapshot.requireData[index]);
-                                  },
-                                  child: HabitIndicator(
-                                      habit: snapshot.requireData[index]),
-                                ),
-                            childCount: snapshot.requireData.length),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12))
-                    : const SliverPadding(padding: EdgeInsets.all(2),),
-              ),
-            )
+            const SliverSectionLabel("Today"),
+            SliverHabitGrid(
+                habits: context.read<HabitRepository>().watchTodayHabits()),
+            const SliverSectionLabel("This week"),
+            SliverHabitGrid(
+                habits: context.read<HabitRepository>().watchThisWeekHabits()),
+            const SliverSectionLabel("This month"),
+            SliverHabitGrid(
+                habits: context.read<HabitRepository>().watchThisMonthHabits())
           ],
         ),
       ),
     );
-  }
-
-  void _openHabitScreen(BuildContext context, Habit habit) {
-    Navigator.pushNamed(context, "/habit",
-        arguments: HabitPageArguments(habit));
   }
 
   void _openNewHabitScreen(BuildContext context) {
@@ -69,18 +40,83 @@ class HomePage extends StatelessWidget {
   }
 }
 
+class SliverHabitGrid extends StatelessWidget {
+  const SliverHabitGrid({Key? key, required this.habits}) : super(key: key);
+
+  final Stream<List<Habit>> habits;
+
+  @override
+  Widget build(BuildContext context) => SliverPadding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+        sliver: StreamBuilder<List<Habit>>(
+          stream: habits,
+          builder: (context, snapshot) => snapshot.hasData
+              ? SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                      (context, index) => InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () {
+                              _openHabitScreen(
+                                  context, snapshot.requireData[index]);
+                            },
+                            child: HabitIndicator(
+                                habit: snapshot.requireData[index]),
+                          ),
+                      childCount: snapshot.requireData.length),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12))
+              : const SliverPadding(
+                  padding: EdgeInsets.all(2),
+                ),
+        ),
+      );
+
+  void _openHabitScreen(BuildContext context, Habit habit) {
+    Navigator.pushNamed(context, "/habit",
+        arguments: HabitPageArguments(habit));
+  }
+}
+
+class SliverSectionLabel extends StatelessWidget {
+  const SliverSectionLabel(
+    this.name, {
+    Key? key,
+  }) : super(key: key);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      sliver: SliverFixedExtentList(
+          delegate: SliverChildBuilderDelegate(
+              (context, index) => SectionLabel(name),
+              childCount: 1),
+          itemExtent: 30),
+    );
+  }
+}
+
 class SectionLabel extends StatelessWidget {
-  const SectionLabel({Key? key}) : super(key: key);
+  const SectionLabel(this.name,
+      {Key? key, required, this.completionPercentage = 0})
+      : super(key: key);
+
+  final String name;
+  final double completionPercentage;
 
   @override
   Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text("Today", style: Theme.of(context).textTheme.headline6),
-      Text(
-        "47%",
-        style: Theme.of(context).textTheme.subtitle1,
-      )
-    ],
-  );
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(name, style: Theme.of(context).textTheme.headline6),
+          Text(
+            (completionPercentage * 100).toStringAsFixed(0) + "%",
+            style: Theme.of(context).textTheme.subtitle1,
+          )
+        ],
+      );
 }

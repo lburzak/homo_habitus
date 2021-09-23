@@ -19,6 +19,18 @@ class HabitDao {
     return rows.map((row) => habitFromMap(row)).toList();
   }
 
+  Future<List<Habit>> getThisWeekHabits() async {
+    final rows =
+        await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['week']);
+    return rows.map((row) => habitFromMap(row)).toList();
+  }
+
+  Future<List<Habit>> getThisMonthHabits() async {
+    final rows =
+        await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['month']);
+    return rows.map((row) => habitFromMap(row)).toList();
+  }
+
   Future<Habit> getHabitById(int id) async {
     final map = await db.rawQuery(Queries.selectHabitById, [id]);
     return habitFromMap(map.first);

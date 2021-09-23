@@ -14,13 +14,28 @@ class HabitRepository {
 
   Stream<DataEvent> get _events => _dataEventBus.events;
 
-  Stream<List<Habit>> watchAllHabits() async* {
+  Stream<List<Habit>> watchTodayHabits() async* {
     yield await _habitDao.getTodayHabits();
 
     yield* _events
-        .where(
-            (event) => event is HabitCreatedEvent || event is HabitChangedEvent)
+        .where(eventAffectsHabitList)
         .asyncMap((event) => _habitDao.getTodayHabits());
+  }
+
+  Stream<List<Habit>> watchThisWeekHabits() async* {
+    yield await _habitDao.getThisWeekHabits();
+
+    yield* _events
+        .where(eventAffectsHabitList)
+        .asyncMap((event) => _habitDao.getThisWeekHabits());
+  }
+
+  Stream<List<Habit>> watchThisMonthHabits() async* {
+    yield await _habitDao.getThisMonthHabits();
+
+    yield* _events
+        .where(eventAffectsHabitList)
+        .asyncMap((event) => _habitDao.getThisMonthHabits());
   }
 
   Stream<Habit> watchHabit(int id) async* {
@@ -38,4 +53,7 @@ class HabitRepository {
     _habitDao.createHabit(name: name, icon: icon, goal: goal);
     _dataEventBus.emit(HabitCreatedEvent());
   }
+
+  bool eventAffectsHabitList(DataEvent event) =>
+      event is HabitCreatedEvent || event is HabitChangedEvent;
 }
