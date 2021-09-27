@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homo_habitus/bloc/habit_list_cubit.dart';
 import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/model/timeframe.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
-import 'package:provider/provider.dart';
+import 'package:homo_habitus/widget/sectioned_grid.dart';
 
 import 'habit_page.dart';
 
@@ -19,30 +19,8 @@ class HomePage extends StatelessWidget {
           onPressed: () { _openNewHabitScreen(context); }),
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-        child: CustomScrollView(
-          slivers: [
-            SliverSectionLabel("Today",
-                completionPercentage: context
-                    .read<HabitRepository>()
-                    .watchCompletionPercentageByTimeframe(Timeframe.day)),
-            SliverHabitGrid(
-                habits: context.read<HabitRepository>().watchTodayHabits()),
-            SliverSectionLabel(
-              "This week",
-              completionPercentage: context
-                  .read<HabitRepository>()
-                  .watchCompletionPercentageByTimeframe(Timeframe.week),
-            ),
-            SliverHabitGrid(
-                habits: context.read<HabitRepository>().watchThisWeekHabits()),
-            SliverSectionLabel("This month",
-                completionPercentage: context
-                    .read<HabitRepository>()
-                    .watchCompletionPercentageByTimeframe(Timeframe.month)),
-            SliverHabitGrid(
-                habits: context.read<HabitRepository>().watchThisMonthHabits())
-          ],
-        ),
+        child: BlocProvider(
+            create: (context) => HabitListCubit(), child: const HabitGrid()),
       ),
     );
   }
@@ -52,37 +30,47 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class SliverHabitGrid extends StatelessWidget {
-  const SliverHabitGrid({Key? key, required this.habits}) : super(key: key);
-
-  final Stream<List<Habit>> habits;
+class HabitGrid extends StatelessWidget {
+  const HabitGrid({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => SliverPadding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-        sliver: StreamBuilder<List<Habit>>(
-          stream: habits,
-          builder: (context, snapshot) => snapshot.hasData
-              ? SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                      (context, index) => InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: () {
-                              _openHabitScreen(
-                                  context, snapshot.requireData[index]);
-                            },
-                            child: HabitIndicator(
-                                habit: snapshot.requireData[index]),
-                          ),
-                      childCount: snapshot.requireData.length),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12))
-              : const SliverPadding(
-                  padding: EdgeInsets.all(2),
-                ),
-        ),
+  Widget build(BuildContext context) {
+    return BlocBuilder<HabitListCubit, HabitListState>(
+      builder: (context, state) {
+        return SectionedGrid(
+          sections: [
+            state.daySummary.toSection("Today"),
+            state.weekSummary.toSection("This week"),
+            state.monthSummary.toSection("This month")
+          ],
+        );
+      },
+    );
+  }
+}
+
+extension SectionConverter on TimeframeSummary {
+  Section toSection(String label) => Section(
+      headerBuilder: (context) =>
+          TimeframeSectionHeader(label, completionPercentage: completionRate),
+      childBuilder: (context, index) => HabitCell(habit: habits[index]),
+      childCount: habits.length);
+}
+
+class HabitCell extends StatelessWidget {
+  final Habit habit;
+
+  const HabitCell({Key? key, required this.habit}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        customBorder: const CircleBorder(),
+        onTap: () {
+          _openHabitScreen(context, habit);
+        },
+        child: HabitIndicator(habit: habit),
       );
 
   void _openHabitScreen(BuildContext context, Habit habit) {
@@ -91,36 +79,8 @@ class SliverHabitGrid extends StatelessWidget {
   }
 }
 
-class SliverSectionLabel extends StatelessWidget {
-  const SliverSectionLabel(
-    this.name, {
-    Key? key,
-    required this.completionPercentage,
-  }) : super(key: key);
-
-  final String name;
-  final Stream<double> completionPercentage;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-      sliver: SliverFixedExtentList(
-          delegate: SliverChildBuilderDelegate(
-              (context, index) => StreamBuilder<double>(
-                  stream: completionPercentage,
-                  builder: (context, snapshot) => snapshot.hasData
-                      ? SectionLabel(name,
-                          completionPercentage: snapshot.requireData)
-                      : const CircularProgressIndicator()),
-              childCount: 1),
-          itemExtent: 30),
-    );
-  }
-}
-
-class SectionLabel extends StatelessWidget {
-  const SectionLabel(this.name,
+class TimeframeSectionHeader extends StatelessWidget {
+  const TimeframeSectionHeader(this.name,
       {Key? key, required, this.completionPercentage = 0})
       : super(key: key);
 
