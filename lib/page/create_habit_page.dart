@@ -61,91 +61,131 @@ class CreateHabitView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        FormSection("Habit",
-            child: SizedBox(
-              height: 60,
-              child: Material(
-                  clipBehavior: Clip.hardEdge,
-                  borderRadius: BorderRadius.circular(12),
-                  color: Theme.of(context).colorScheme.onBackground,
-                  child: Stack(
-                      alignment: Alignment.centerLeft,
-                      fit: StackFit.passthrough,
-                      children: [
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: TextField(
-                              textAlign: TextAlign.center,
-                              onChanged: (text) => context.read<HabitCreatorBloc>().add(HabitCreatorNameChanged(text)),
-                              decoration: const InputDecoration.collapsed(
-                                  hintText: "Your habit..."),
-                            ),
-                          ),
-                        ),
-                        const FractionallySizedBox(
-                            widthFactor: 0.2, child: IconSelector()),
-                      ])),
-            )),
-        FormSection("Goal",
-            child: Material(
-              clipBehavior: Clip.hardEdge,
-              borderRadius: BorderRadius.circular(12),
-              color: Theme.of(context).colorScheme.onBackground,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 48,
-                    child: GoalTypeSelector(),
-                  ),
-                  BlocBuilder<HabitCreatorBloc, HabitCreatorState>(
-                      builder: (context, state) {
-                        switch (state.goalType) {
-                          case GoalType.counter:
-                            return const CounterSetupView();
-                          case GoalType.timer:
-                            return const TimerSetupView();
-                        }
-                      },
-                      buildWhen: (previous, current) =>
-                          previous.goalType != current.goalType)
-                ],
-              ),
-            )),
+      children: const [
+        HabitSection(),
+        GoalSection(),
         Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
-          child: FormSection("Repetition",
-              child: Material(
-                borderRadius: BorderRadius.circular(12),
-                clipBehavior: Clip.hardEdge,
-                child: SizedBox(
-                  height: 48,
-                  child: OptionSelector<Timeframe>(
-                    onChange: (timeframe) => context
-                        .read<HabitCreatorBloc>()
-                        .add(HabitCreatorTimeframeChanged(timeframe)),
-                    options: [
-                      Option(Timeframe.day, label: "Daily"),
-                      Option(Timeframe.week, label: "Weekly"),
-                      Option(Timeframe.month, label: "Monthly")
-                    ],
-                  ),
-                ),
-              )),
+          padding: EdgeInsets.only(bottom: 12.0),
+          child: RepetitionSection(),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
-          child: SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                  onPressed: () => context
-                      .read<HabitCreatorBloc>()
-                      .add(HabitCreatorSubmitted()),
-                  icon: const Icon(Icons.add),
-                  label: const SizedBox.shrink())),
+          padding: EdgeInsets.only(top: 24.0, bottom: 12.0),
+          child: SubmitButton(),
         )
       ],
+    );
+  }
+}
+
+class SubmitButton extends StatelessWidget {
+  const SubmitButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        height: 48,
+        child: ElevatedButton.icon(
+            onPressed: () =>
+                context.read<HabitCreatorBloc>().add(HabitCreatorSubmitted()),
+            icon: const Icon(Icons.add),
+            label: const SizedBox.shrink()));
+  }
+}
+
+class RepetitionSection extends StatelessWidget {
+  const RepetitionSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FormSection("Repetition",
+        child: SizedBox(
+          height: 48,
+          child: OptionSelector<Timeframe>(
+            onChange: (timeframe) => context
+                .read<HabitCreatorBloc>()
+                .add(HabitCreatorTimeframeChanged(timeframe)),
+            options: [
+              Option(Timeframe.day, label: "Daily"),
+              Option(Timeframe.week, label: "Weekly"),
+              Option(Timeframe.month, label: "Monthly")
+            ],
+          ),
+        ));
+  }
+}
+
+class GoalSection extends StatelessWidget {
+  const GoalSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FormSection("Goal",
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 48,
+              child: GoalTypeSelector(),
+            ),
+            BlocBuilder<HabitCreatorBloc, HabitCreatorState>(
+                builder: (context, state) {
+                  switch (state.goalType) {
+                    case GoalType.counter:
+                      return const CounterSetupView();
+                    case GoalType.timer:
+                      return const TimerSetupView();
+                  }
+                },
+                buildWhen: (previous, current) =>
+                    previous.goalType != current.goalType)
+          ],
+        ));
+  }
+}
+
+class HabitSection extends StatelessWidget {
+  const HabitSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FormSection("Habit",
+        child: SizedBox(
+          height: 60,
+          child: Stack(
+              alignment: Alignment.centerLeft,
+              fit: StackFit.passthrough,
+              children: const [
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: HabitNameField(),
+                  ),
+                ),
+                FractionallySizedBox(widthFactor: 0.2, child: IconSelector()),
+              ]),
+        ));
+  }
+}
+
+class HabitNameField extends StatelessWidget {
+  const HabitNameField({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      textAlign: TextAlign.center,
+      onChanged: (text) =>
+          context.read<HabitCreatorBloc>().add(HabitCreatorNameChanged(text)),
+      decoration: const InputDecoration.collapsed(hintText: "Your habit..."),
     );
   }
 }
@@ -319,7 +359,11 @@ class FormSection extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 6),
-            child: child,
+            child: Material(
+                clipBehavior: Clip.hardEdge,
+                borderRadius: BorderRadius.circular(12),
+                color: Theme.of(context).colorScheme.onBackground,
+                child: child),
           ),
         ],
       ),
