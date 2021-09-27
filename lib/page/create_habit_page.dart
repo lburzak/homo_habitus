@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +10,7 @@ import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
+import 'package:homo_habitus/repository/icon_asset_repository.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
 import 'package:homo_habitus/widget/round_button.dart';
@@ -420,40 +419,4 @@ class IconSelectionTile extends StatelessWidget {
       ),
     );
   }
-}
-
-class IconAssetRepository {
-  static const String _assetManifest = "AssetManifest.json";
-  bool _isLoaded = false;
-  List<IconAsset> _icons = List.empty();
-
-  Future<List<IconAsset>> findAllIcons() async {
-    if (!_isLoaded) {
-      await _loadIconAssets();
-      _isLoaded = true;
-    }
-
-    return _icons;
-  }
-
-  Future _loadIconAssets() async {
-    final manifestContent = await _readManifest();
-    final Map<String, dynamic> jsonManifest = json.decode(manifestContent);
-
-    final Iterable<String> paths = jsonManifest.keys
-        .where((key) => key.startsWith("assets/icons"))
-        .where((key) => key.endsWith('.svg'));
-
-    _icons = paths
-        .map((path) =>
-            IconAsset(name: _decodeIconNameFromPath(path), path: path))
-        .toList(growable: false);
-  }
-
-  String _decodeIconNameFromPath(String path) {
-    return path.split(".").first.split("/").last;
-  }
-
-  Future<String> _readManifest() async =>
-      await rootBundle.loadString(_assetManifest);
 }
