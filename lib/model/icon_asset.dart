@@ -9,12 +9,15 @@ class IconAsset {
   IconAsset({required this.name, required this.path});
 
   SvgPicture asSvgPicture(BuildContext context) => SvgPicture.asset(
-    path,
-    color: Theme.of(context).iconTheme.color,
-  );
+        path,
+        color: Theme.of(context).iconTheme.color,
+      );
 
   @override
   String toString() {
     return 'IconAsset{name: $name, path: $path}';
   }
+
+  static IconAsset placeholder() =>
+      IconAsset(name: "language", path: "assets/icons/language.svg");
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/round_indicator.dart';
@@ -31,10 +30,7 @@ class HabitIndicator extends StatelessWidget {
             active: false,
             progressStrokeWidth: progressStrokeWidth ?? 3,
             progressValue: completionRate ?? habit.progress.completionRate,
-            body: SvgPicture.asset(
-              'assets/icons/${habit.iconName}.svg',
-              color: Theme.of(context).iconTheme.color,
-            )),
+            body: habit.icon.asSvgPicture(context)),
       ),
     );
   }

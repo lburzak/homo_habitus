@@ -1,19 +1,20 @@
+import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/progress.dart';
 
 class Habit {
   int id;
   String name;
-  String iconName;
+  IconAsset icon;
   Progress progress;
 
   Habit(
       {required this.id,
       required this.name,
-      required this.iconName,
+      required this.icon,
       required this.progress});
 
   @override
   String toString() {
-    return 'Habit{id: $id, name: $name, iconName: $iconName}';
+    return 'Habit{id: $id, name: $name, icon: $icon}';
   }
 }

@@ -57,13 +57,13 @@ class HabitDao {
 
 extension HabitPersistence on Habit {
   Map<String, Object?> toMap() =>
-      {Columns.habit.name: name, Columns.habit.iconName: iconName};
+      {Columns.habit.name: name, Columns.habit.iconName: icon.name};
 }
 
 Habit habitFromMap(Map<String, Object?> map) => Habit(
     id: map[Columns.habit.id] as int,
     name: map[Columns.habit.name] as String,
-    iconName: map[Columns.habit.iconName] as String,
+    icon: IconAsset.placeholder(),
     progress: goalProgressFromMap(map));
 
 String serializeTimeframe(Timeframe timeframe) {
