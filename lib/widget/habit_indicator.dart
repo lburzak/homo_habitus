@@ -8,7 +8,7 @@ import 'package:homo_habitus/widget/round_indicator.dart';
 import 'package:provider/provider.dart';
 
 class HabitIndicator extends StatelessWidget {
-  HabitIndicator(
+  const HabitIndicator(
       {Key? key,
       required this.habit,
       this.progressStrokeWidth,
@@ -19,7 +19,7 @@ class HabitIndicator extends StatelessWidget {
   final double iconSize;
   final double? progressStrokeWidth;
   final Habit habit;
-  late double? completionRate;
+  final double? completionRate;
 
   @override
   Widget build(BuildContext context) {

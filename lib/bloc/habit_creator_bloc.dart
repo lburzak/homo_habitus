@@ -70,11 +70,6 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
       return value;
     }
   }
-
-  @override
-  void onEvent(HabitCreatorEvent event) {
-    print(event);
-  }
 }
 
 extension on HabitCreatorState {

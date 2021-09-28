@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
                     theme: themeData,
                     routes: {
                       "/": (context) => const HomePage(),
-                      "/habit": (context) => HabitPage(),
+                      "/habit": (context) => const HabitPage(),
                       "/create_habit": (context) => const CreateHabitPage()
                     },
                   ),

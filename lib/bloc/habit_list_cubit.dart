@@ -16,8 +16,8 @@ class HabitListCubit extends Cubit<HabitListState> {
                 iconName: "language",
                 progress: CounterGoalProgress(4, 10))
           ]),
-          weekSummary: TimeframeSummary(completionRate: 0.1, habits: []),
-          monthSummary: TimeframeSummary(completionRate: 0.1, habits: []),
+          weekSummary: const TimeframeSummary(completionRate: 0.1, habits: []),
+          monthSummary: const TimeframeSummary(completionRate: 0.1, habits: []),
         ));
 }
 

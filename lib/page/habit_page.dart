@@ -19,7 +19,7 @@ class HabitPageArguments {
 }
 
 class HabitPage extends StatelessWidget {
-  HabitPage({Key? key}) : super(key: key);
+  const HabitPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class HabitPageBody extends StatelessWidget {
         scrollDirection: Axis.vertical,
         children: [
           HabitPreview(initialHabit: initialHabit),
-          ProgressHistoryPage()
+          const ProgressHistoryPage()
         ]);
   }
 }

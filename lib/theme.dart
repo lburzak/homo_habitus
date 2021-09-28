@@ -37,4 +37,4 @@ final _appBarTheme = AppBarTheme(
     centerTitle: true,
     elevation: 0,
     titleTextStyle: _textTheme.headline6,
-    backgroundColor: Color(0xff303030));
+    backgroundColor: const Color(0xff303030));
