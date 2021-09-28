@@ -15,7 +15,7 @@ class ProgressListLoading extends ProgressListState {
 }
 
 class ProgressListLoaded extends ProgressListState {
-  final List<GoalProgress> dayProgresses;
+  final List<Progress> dayProgresses;
 
   const ProgressListLoaded(this.dayProgresses);
 

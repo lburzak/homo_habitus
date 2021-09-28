@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/model/habit_progress.dart';
+import 'package:homo_habitus/model/progress.dart';
 import 'package:meta/meta.dart';
 
 part 'habit_list_state.dart';
@@ -14,7 +14,7 @@ class HabitListCubit extends Cubit<HabitListState> {
                 id: 12,
                 name: "name",
                 iconName: "language",
-                progress: CounterGoalProgress(4, 10))
+                progress: CounterProgress(4, 10))
           ]),
           weekSummary: const TimeframeSummary(completionRate: 0.1, habits: []),
           monthSummary: const TimeframeSummary(completionRate: 0.1, habits: []),

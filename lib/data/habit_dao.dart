@@ -1,6 +1,6 @@
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/model/habit_progress.dart';
+import 'package:homo_habitus/model/progress.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/util/datetime.dart';
@@ -108,15 +108,15 @@ GoalType decodeGoalType(String serialized) {
   }
 }
 
-GoalProgress goalProgressFromMap(Map<String, Object?> map) {
+Progress goalProgressFromMap(Map<String, Object?> map) {
   String type = map['type'] as String;
   int currentProgress = map['current_progress'] as int;
   int targetProgress = map['target_value'] as int;
 
   switch (decodeGoalType(type)) {
     case GoalType.counter:
-      return CounterGoalProgress(currentProgress, targetProgress);
+      return CounterProgress(currentProgress, targetProgress);
     case GoalType.timer:
-      return TimerGoalProgress(currentProgress, targetProgress);
+      return TimerProgress(currentProgress, targetProgress);
   }
 }

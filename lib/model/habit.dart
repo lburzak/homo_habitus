@@ -1,10 +1,10 @@
-import 'package:homo_habitus/model/habit_progress.dart';
+import 'package:homo_habitus/model/progress.dart';
 
 class Habit {
   int id;
   String name;
   String iconName;
-  GoalProgress progress;
+  Progress progress;
 
   Habit(
       {required this.id,

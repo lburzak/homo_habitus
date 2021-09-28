@@ -5,7 +5,7 @@ import 'package:homo_habitus/bloc/habit_preview_bloc.dart';
 import 'package:homo_habitus/bloc/progress_calendar_cubit.dart';
 import 'package:homo_habitus/bloc/progress_list_cubit.dart';
 import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/model/habit_progress.dart';
+import 'package:homo_habitus/model/progress.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/repository/progress_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
@@ -243,10 +243,10 @@ class ProgressCounter extends StatelessWidget {
 
         final progress = state.habit.progress;
 
-        if (progress is CounterGoalProgress) {
+        if (progress is CounterProgress) {
           current = progress.currentCount.toString();
           target = progress.targetCount.toString();
-        } else if (progress is TimerGoalProgress) {
+        } else if (progress is TimerProgress) {
           current = Duration(milliseconds: progress.millisecondsPassed)
               .formatCounterDuration();
           target = Duration(milliseconds: progress.targetMilliseconds)
