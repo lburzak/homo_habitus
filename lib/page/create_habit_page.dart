@@ -194,16 +194,11 @@ class HabitNameField extends StatelessWidget {
   }
 }
 
-class GoalTypeSelector extends StatefulWidget {
+class GoalTypeSelector extends StatelessWidget {
   const GoalTypeSelector({
     Key? key,
   }) : super(key: key);
 
-  @override
-  State<GoalTypeSelector> createState() => _GoalTypeSelectorState();
-}
-
-class _GoalTypeSelectorState extends State<GoalTypeSelector> {
   @override
   Widget build(BuildContext context) {
     return OptionSelector<GoalType>(
