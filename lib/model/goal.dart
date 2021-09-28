@@ -1,19 +1,12 @@
-import 'package:homo_habitus/model/timeframe.dart';
+import 'package:homo_habitus/model/deadline.dart';
+import 'package:homo_habitus/model/progress.dart';
 
 class Goal {
-  int targetProgress;
-  GoalType type;
-  Timeframe timeframe;
+  final Deadline deadline;
+  final Progress progress;
 
-  Goal({required this.targetProgress, required this.type, required this.timeframe});
+  static Goal placeholder() =>
+      Goal(progress: CounterProgress.initial(10), deadline: Deadline.endOfDay);
 
-  @override
-  String toString() {
-    return 'Goal{targetProgress: $targetProgress, type: $type, timeframe: $timeframe}';
-  }
-}
-
-enum GoalType {
-  counter,
-  timer
+  Goal({required this.deadline, required this.progress});
 }

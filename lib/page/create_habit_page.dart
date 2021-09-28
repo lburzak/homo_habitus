@@ -5,8 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
-import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/timeframe.dart';
+import 'package:homo_habitus/model/deadline.dart';
 import 'package:homo_habitus/page/select_icon_dialog.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
@@ -103,14 +102,14 @@ class RepetitionSection extends StatelessWidget {
     return FormSection("Repetition",
         child: SizedBox(
           height: 48,
-          child: OptionSelector<Timeframe>(
-            onChange: (timeframe) => context
+          child: OptionSelector<Deadline>(
+            onChange: (deadline) => context
                 .read<HabitCreatorBloc>()
-                .add(HabitCreatorTimeframeChanged(timeframe)),
+                .add(HabitCreatorDeadlineChanged(deadline)),
             options: [
-              Option(Timeframe.day, label: "Daily"),
-              Option(Timeframe.week, label: "Weekly"),
-              Option(Timeframe.month, label: "Monthly")
+              Option(Deadline.endOfDay, label: "Daily"),
+              Option(Deadline.endOfWeek, label: "Weekly"),
+              Option(Deadline.endOfMonth, label: "Monthly")
             ],
           ),
         ));

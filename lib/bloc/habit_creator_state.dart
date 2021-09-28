@@ -3,7 +3,7 @@ part of 'habit_creator_bloc.dart';
 class HabitCreatorState extends Equatable {
   final IconAsset icon;
   final String name;
-  final Timeframe timeframe;
+  final Deadline deadline;
   final int targetCount;
   final int targetHours;
   final int targetMinutes;
@@ -13,7 +13,7 @@ class HabitCreatorState extends Equatable {
   const HabitCreatorState(
       {required this.icon,
       required this.name,
-      required this.timeframe,
+      required this.deadline,
       required this.targetCount,
       required this.targetHours,
       required this.targetMinutes,
@@ -23,7 +23,7 @@ class HabitCreatorState extends Equatable {
   HabitCreatorState copyWith(
           {IconAsset? icon,
           String? name,
-          Timeframe? timeframe,
+          Deadline? deadline,
           int? targetCount,
           int? targetHours,
           int? targetMinutes,
@@ -32,7 +32,7 @@ class HabitCreatorState extends Equatable {
       HabitCreatorState(
           icon: icon ?? this.icon,
           name: name ?? this.name,
-          timeframe: timeframe ?? this.timeframe,
+          deadline: deadline ?? this.deadline,
           targetCount: targetCount ?? this.targetCount,
           targetHours: targetHours ?? this.targetHours,
           targetMinutes: targetMinutes ?? this.targetMinutes,
@@ -40,10 +40,11 @@ class HabitCreatorState extends Equatable {
           finished: finished ?? this.finished);
 
   @override
-  List<Object> get props => [
+  List<Object> get props =>
+      [
         icon,
         name,
-        timeframe,
+        deadline,
         goalType,
         targetCount,
         targetHours,

@@ -1,8 +1,7 @@
+import 'package:homo_habitus/model/deadline.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/model/progress.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
-import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/util/datetime.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -15,19 +14,19 @@ class HabitDao {
 
   Future<List<Habit>> getTodayHabits() async {
     final rows =
-        await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['day']);
+    await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['day']);
     return rows.map((row) => habitFromMap(row)).toList();
   }
 
   Future<List<Habit>> getThisWeekHabits() async {
     final rows =
-        await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['week']);
+    await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['week']);
     return rows.map((row) => habitFromMap(row)).toList();
   }
 
   Future<List<Habit>> getThisMonthHabits() async {
     final rows =
-        await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['month']);
+    await db.rawQuery(Queries.selectHabitsStatusesByTimeframe, ['month']);
     return rows.map((row) => habitFromMap(row)).toList();
   }
 
@@ -36,17 +35,15 @@ class HabitDao {
     return habitFromMap(map.first);
   }
 
-  Future<double> getCompletionPercentageByTimeframe(Timeframe timeframe) async {
-    final result = await db.rawQuery(
-        Queries.selectCompletionPercentageByTimeframe,
-        [serializeTimeframe(timeframe)]);
+  Future<double> getCompletionPercentageByDeadline(Deadline deadline) async {
+    final result = await db
+        .rawQuery(Queries.selectCompletionPercentageByTimeframe, ['day']);
     return result.first['completion_percentage'] as double;
   }
 
-  Future<void> createHabit(
-      {required String name,
-      required IconAsset icon,
-      required Goal goal}) async {
+  Future<void> createHabit({required String name,
+    required IconAsset icon,
+    required Goal goal}) async {
     await db.transaction((txn) async {
       final habitId = await txn.insert(Tables.habit,
           {Columns.habit.name: name, Columns.habit.iconName: icon.name});
@@ -60,63 +57,15 @@ extension HabitPersistence on Habit {
       {Columns.habit.name: name, Columns.habit.iconName: icon.name};
 }
 
-Habit habitFromMap(Map<String, Object?> map) => Habit(
-    id: map[Columns.habit.id] as int,
-    name: map[Columns.habit.name] as String,
-    icon: IconAsset.placeholder(),
-    progress: goalProgressFromMap(map));
-
-String serializeTimeframe(Timeframe timeframe) {
-  switch (timeframe) {
-    case Timeframe.day:
-      return 'day';
-    case Timeframe.week:
-      return 'week';
-    case Timeframe.month:
-      return 'month';
-  }
-}
+Habit habitFromMap(Map<String, Object?> map) => Habit.placeholder();
 
 extension GoalPersistence on Goal {
-  Map<String, Object?> toMap(int habitId) => {
+  Map<String, Object?> toMap(int habitId) =>
+      {
         Columns.goal.habitId: habitId,
-        Columns.goal.timeframe: serializeTimeframe(timeframe),
-        Columns.goal.targetValue: targetProgress,
-        Columns.goal.type: _serializeType(),
-        // TODO: leave it to the database
+        Columns.goal.timeframe: 'day',
+        Columns.goal.targetValue: 0,
+        Columns.goal.type: 'counter',
         Columns.goal.assignmentDate: generateUnixEpochTimestamp(),
       };
-
-  String _serializeType() {
-    switch (type) {
-      case GoalType.timer:
-        return 'timer';
-      case GoalType.counter:
-        return 'counter';
-    }
-  }
-}
-
-GoalType decodeGoalType(String serialized) {
-  switch (serialized) {
-    case 'timer':
-      return GoalType.timer;
-    case 'counter':
-      return GoalType.counter;
-    default:
-      throw Exception("Unexpected goal type: $serialized");
-  }
-}
-
-Progress goalProgressFromMap(Map<String, Object?> map) {
-  String type = map['type'] as String;
-  int currentProgress = map['current_progress'] as int;
-  int targetProgress = map['target_value'] as int;
-
-  switch (decodeGoalType(type)) {
-    case GoalType.counter:
-      return CounterProgress(currentProgress, targetProgress);
-    case GoalType.timer:
-      return TimerProgress(currentProgress, targetProgress);
-  }
 }

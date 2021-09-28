@@ -29,7 +29,7 @@ class HabitIndicator extends StatelessWidget {
         child: RoundIndicator(
             active: false,
             progressStrokeWidth: progressStrokeWidth ?? 3,
-            progressValue: completionRate ?? habit.progress.completionRate,
+            progressValue: completionRate ?? habit.goal.progress.completionRate,
             body: habit.icon.asSvgPicture(context)),
       ),
     );
@@ -59,8 +59,8 @@ class _AnimatedHabitIndicatorState extends State<AnimatedHabitIndicator> {
 
   @override
   void initState() {
-    oldCompletionRate = widget.habit.progress.completionRate;
-    newCompletionRate = widget.habit.progress.completionRate;
+    oldCompletionRate = widget.habit.goal.progress.completionRate;
+    newCompletionRate = widget.habit.goal.progress.completionRate;
 
     subscription = context
         .read<HabitRepository>()
@@ -68,7 +68,7 @@ class _AnimatedHabitIndicatorState extends State<AnimatedHabitIndicator> {
         .listen((habit) {
       setState(() {
         oldCompletionRate = newCompletionRate;
-        newCompletionRate = habit.progress.completionRate;
+        newCompletionRate = habit.goal.progress.completionRate;
       });
     });
 

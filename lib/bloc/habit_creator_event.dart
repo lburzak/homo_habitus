@@ -49,13 +49,13 @@ class HabitCreatorGoalChanged extends HabitCreatorEvent {
   List<Object> get props => [goalType];
 }
 
-class HabitCreatorTimeframeChanged extends HabitCreatorEvent {
-  final Timeframe timeframe;
+class HabitCreatorDeadlineChanged extends HabitCreatorEvent {
+  final Deadline deadline;
 
-  const HabitCreatorTimeframeChanged(this.timeframe);
+  const HabitCreatorDeadlineChanged(this.deadline);
 
   @override
-  List<Object> get props => [timeframe];
+  List<Object> get props => [deadline];
 }
 
 class HabitCreatorIconChanged extends HabitCreatorEvent {

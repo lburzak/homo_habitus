@@ -241,7 +241,7 @@ class ProgressCounter extends StatelessWidget {
         var current = "";
         var target = "";
 
-        final progress = state.habit.progress;
+        final progress = state.habit.goal.progress;
 
         if (progress is CounterProgress) {
           current = progress.currentCount.toString();

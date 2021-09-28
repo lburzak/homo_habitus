@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:homo_habitus/data/data_event.dart';
 import 'package:homo_habitus/data/habit_dao.dart';
+import 'package:homo_habitus/model/deadline.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
-import 'package:homo_habitus/model/timeframe.dart';
 
 class HabitRepository {
   final HabitDao _habitDao;
@@ -39,11 +39,10 @@ class HabitRepository {
         .asyncMap((event) => _habitDao.getThisMonthHabits());
   }
 
-  Stream<double> watchCompletionPercentageByTimeframe(
-      Timeframe timeframe) async* {
-    yield await _habitDao.getCompletionPercentageByTimeframe(timeframe);
+  Stream<double> watchCompletionPercentageByDeadline(Deadline deadline) async* {
+    yield await _habitDao.getCompletionPercentageByDeadline(deadline);
     yield* _events.where(eventAffectsHabitList).asyncMap(
-        (event) => _habitDao.getCompletionPercentageByTimeframe(timeframe));
+        (event) => _habitDao.getCompletionPercentageByDeadline(deadline));
   }
 
   Stream<Habit> watchHabit(int id) async* {

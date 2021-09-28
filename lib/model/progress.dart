@@ -10,6 +10,8 @@ class TimerProgress extends Progress {
 
   @override
   double get completionRate => millisecondsPassed / targetMilliseconds;
+
+  TimerProgress.initial(this.targetMilliseconds) : millisecondsPassed = 0;
 }
 
 class CounterProgress extends Progress {
@@ -20,4 +22,6 @@ class CounterProgress extends Progress {
 
   @override
   double get completionRate => currentCount / targetCount;
+
+  CounterProgress.initial(this.targetCount) : currentCount = 0;
 }
