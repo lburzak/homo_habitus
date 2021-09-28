@@ -10,6 +10,7 @@ import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/page/select_icon_dialog.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
+import 'package:homo_habitus/widget/form_section.dart';
 import 'package:homo_habitus/widget/number_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
 import 'package:provider/provider.dart';
@@ -245,38 +246,6 @@ class TimerSetupView extends StatelessWidget {
             onMinutesChanged: (minutes) => context
                 .read<HabitCreatorBloc>()
                 .add(HabitCreatorTimerMinutesChanged(minutes))),
-      ),
-    );
-  }
-}
-
-class FormSection extends StatelessWidget {
-  const FormSection(this.label, {Key? key, required this.child})
-      : super(key: key);
-
-  final String label;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Material(
-                clipBehavior: Clip.hardEdge,
-                borderRadius: BorderRadius.circular(12),
-                color: Theme.of(context).colorScheme.onBackground,
-                child: child),
-          ),
-        ],
       ),
     );
   }
