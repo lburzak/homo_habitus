@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
@@ -12,8 +11,8 @@ import 'package:homo_habitus/model/timeframe.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/repository/icon_asset_repository.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
+import 'package:homo_habitus/widget/number_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
-import 'package:homo_habitus/widget/round_button.dart';
 import 'package:provider/provider.dart';
 
 class CreateHabitPage extends StatelessWidget {
@@ -136,7 +135,12 @@ class GoalSection extends StatelessWidget {
                 builder: (context, state) {
                   switch (state.goalType) {
                     case GoalType.counter:
-                      return const CounterSetupView();
+                      return NumberPicker(
+                        onChanged: (number) => context
+                            .read<HabitCreatorBloc>()
+                            .add(HabitCreatorCounterChanged(number)),
+                        maxDigits: 2,
+                      );
                     case GoalType.timer:
                       return const TimerSetupView();
                   }
@@ -244,98 +248,6 @@ class TimerSetupView extends StatelessWidget {
                 .add(HabitCreatorTimerMinutesChanged(minutes))),
       ),
     );
-  }
-}
-
-class CounterSetupView extends StatefulWidget {
-  const CounterSetupView({Key? key}) : super(key: key);
-
-  @override
-  State<CounterSetupView> createState() => _CounterSetupViewState();
-}
-
-class _CounterSetupViewState extends State<CounterSetupView> {
-  late final TextEditingController _counterEditingController =
-      TextEditingController(
-          text: context.read<HabitCreatorBloc>().state.targetCount.toString());
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: RoundButton(
-              icon: Icons.remove,
-              onPressed: () => context
-                  .read<HabitCreatorBloc>()
-                  .add(HabitCreatorCounterDecremented()),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            children: [
-              BlocListener<HabitCreatorBloc, HabitCreatorState>(
-                listener: (context, state) =>
-                    _updateVisibleValue(state.targetCount),
-                child: TextField(
-                  controller: _counterEditingController,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(2),
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  onTap: _selectAll,
-                  onChanged: (text) => _onValueManuallyEntered(context, text),
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    suffixText: "times",
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: RoundButton(
-              icon: Icons.add,
-              onPressed: () => context
-                  .read<HabitCreatorBloc>()
-                  .add(HabitCreatorCounterIncremented()),
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  void _selectAll() {
-    _counterEditingController.selection = TextSelection(
-        baseOffset: 0, extentOffset: _counterEditingController.text.length);
-  }
-
-  void _onValueManuallyEntered(BuildContext context, String input) {
-    if (input.isEmpty) {
-      return;
-    }
-
-    final int parsedInput = int.parse(input);
-
-    context
-        .read<HabitCreatorBloc>()
-        .add(HabitCreatorCounterChanged(parsedInput));
-  }
-
-  void _updateVisibleValue(int newValue) {
-    final text = newValue.toString();
-    _counterEditingController.value = TextEditingValue(
-        text: text, selection: TextSelection.collapsed(offset: text.length));
   }
 }
 

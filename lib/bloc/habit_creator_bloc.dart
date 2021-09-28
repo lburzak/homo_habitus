@@ -39,16 +39,6 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
       yield state.copyWith(
         targetCount: _normalizeCounterValue(event.value)
       );
-    } else if (event is HabitCreatorCounterDecremented) {
-      if (state.targetCount > 0) {
-        yield state.copyWith(
-          targetCount: state.targetCount - 1
-        );
-      }
-    } else if (event is HabitCreatorCounterIncremented) {
-      if (state.targetCount < 99) {
-        yield state.copyWith(targetCount: state.targetCount + 1);
-      }
     } else if (event is HabitCreatorTimerHoursChanged) {
       yield state.copyWith(targetHours: event.hours);
     } else if (event is HabitCreatorTimerMinutesChanged) {

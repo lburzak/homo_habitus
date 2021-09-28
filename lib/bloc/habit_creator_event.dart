@@ -22,16 +22,6 @@ class HabitCreatorCounterChanged extends HabitCreatorEvent {
   List<Object> get props => [value];
 }
 
-class HabitCreatorCounterIncremented extends HabitCreatorEvent {
-  @override
-  List<Object> get props => [];
-}
-
-class HabitCreatorCounterDecremented extends HabitCreatorEvent {
-  @override
-  List<Object> get props => [];
-}
-
 class HabitCreatorTimerHoursChanged extends HabitCreatorEvent {
   final int hours;
 
