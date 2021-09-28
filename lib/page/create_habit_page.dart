@@ -6,10 +6,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
 import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/icon_asset.dart';
 import 'package:homo_habitus/model/timeframe.dart';
+import 'package:homo_habitus/page/select_icon_dialog.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/repository/icon_asset_repository.dart';
 import 'package:homo_habitus/widget/duration_picker.dart';
 import 'package:homo_habitus/widget/number_picker.dart';
 import 'package:homo_habitus/widget/option_selector.dart';
@@ -172,7 +171,7 @@ class HabitSection extends StatelessWidget {
                     child: HabitNameField(),
                   ),
                 ),
-                FractionallySizedBox(widthFactor: 0.2, child: IconSelector()),
+                FractionallySizedBox(widthFactor: 0.2, child: IconPreview()),
               ]),
         ));
   }
@@ -283,8 +282,8 @@ class FormSection extends StatelessWidget {
   }
 }
 
-class IconSelector extends StatelessWidget {
-  const IconSelector({
+class IconPreview extends StatelessWidget {
+  const IconPreview({
     Key? key,
   }) : super(key: key);
 
@@ -304,75 +303,11 @@ class IconSelector extends StatelessWidget {
         ));
   }
 
-  void _showIconSelectionDialog(BuildContext pageContext) {
-    showModalBottomSheet(
-        context: pageContext,
-        builder: (context) => IconSelectionGrid(
-              onIconSelected: (icon) => pageContext
-                  .read<HabitCreatorBloc>()
-                  .add(HabitCreatorIconChanged(icon)),
-            ));
-  }
-}
-
-class IconSelectionGrid extends StatelessWidget {
-  final void Function(IconAsset)? onIconSelected;
-
-  const IconSelectionGrid({Key? key, this.onIconSelected}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Provider<IconAssetRepository>(
-      create: (context) => IconAssetRepository(),
-      builder: (context, child) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text("Choose icon",
-                style: Theme.of(context).textTheme.subtitle1),
-          ),
-          Expanded(
-            child: FutureBuilder<List<IconAsset>>(
-              future: context.read<IconAssetRepository>().findAllIcons(),
-              builder: (context, snapshot) => snapshot.hasData
-                  ? GridView.builder(
-                      itemCount: snapshot.data!.length,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4),
-                      itemBuilder: (context, index) =>
-                          IconSelectionTile(snapshot.data![index], onTap: () {
-                        onIconSelected!(snapshot.data![index]);
-                        Navigator.pop(context);
-                      }),
-                    )
-                  : const Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class IconSelectionTile extends StatelessWidget {
-  final IconAsset iconAsset;
-  final void Function()? onTap;
-
-  const IconSelectionTile(this.iconAsset, {Key? key, this.onTap})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: FractionallySizedBox(
-        widthFactor: 0.6,
-        heightFactor: 0.6,
-        child: iconAsset.asSvgPicture(context),
-      ),
-    );
+  void _showIconSelectionDialog(BuildContext context) {
+    SelectIconDialog.show(
+        context,
+        (icon) => context
+            .read<HabitCreatorBloc>()
+            .add(HabitCreatorIconChanged(icon)));
   }
 }
