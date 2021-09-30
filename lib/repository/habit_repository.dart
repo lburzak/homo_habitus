@@ -1,66 +1,108 @@
 import 'dart:async';
 
-import 'package:homo_habitus/data/data_event.dart';
-import 'package:homo_habitus/data/habit_dao.dart';
+import 'package:homo_habitus/data/database.dart';
 import 'package:homo_habitus/model/deadline.dart';
 import 'package:homo_habitus/model/goal.dart';
 import 'package:homo_habitus/model/habit.dart';
 import 'package:homo_habitus/model/icon_asset.dart';
+import 'package:homo_habitus/model/progress.dart';
 
 class HabitRepository {
-  final HabitDao _habitDao;
-  final DataEventBus _dataEventBus;
+  final AppDatabase db;
 
-  HabitRepository(this._habitDao, this._dataEventBus);
+  HabitRepository(this.db);
 
-  Stream<DataEvent> get _events => _dataEventBus.events;
+  Stream<List<Habit>> watchHabitsByDeadline(Deadline deadline) => db
+      .findHabitsByDeadline(serializeDeadline(deadline))
+      .map((result) => result.extractHabit())
+      .watch();
 
-  Stream<List<Habit>> watchTodayHabits() async* {
-    yield await _habitDao.getTodayHabits();
+  Stream<double> watchCompletionPercentageByDeadline(Deadline deadline) => db
+      .findCompletionRateByDeadline(serializeDeadline(deadline))
+      .watchSingle();
 
-    yield* _events
-        .where(eventAffectsHabitList)
-        .asyncMap((event) => _habitDao.getTodayHabits());
-  }
-
-  Stream<List<Habit>> watchThisWeekHabits() async* {
-    yield await _habitDao.getThisWeekHabits();
-
-    yield* _events
-        .where(eventAffectsHabitList)
-        .asyncMap((event) => _habitDao.getThisWeekHabits());
-  }
-
-  Stream<List<Habit>> watchThisMonthHabits() async* {
-    yield await _habitDao.getThisMonthHabits();
-
-    yield* _events
-        .where(eventAffectsHabitList)
-        .asyncMap((event) => _habitDao.getThisMonthHabits());
-  }
-
-  Stream<double> watchCompletionPercentageByDeadline(Deadline deadline) async* {
-    yield await _habitDao.getCompletionPercentageByDeadline(deadline);
-    yield* _events.where(eventAffectsHabitList).asyncMap(
-        (event) => _habitDao.getCompletionPercentageByDeadline(deadline));
-  }
-
-  Stream<Habit> watchHabit(int id) async* {
-    yield await _habitDao.getHabitById(id);
-
-    yield* _events
-        .where((event) => event is HabitChangedEvent && event.habitId == id)
-        .asyncMap((event) => _habitDao.getHabitById(id));
-  }
+  Stream<Habit> watchHabit(int id) =>
+      db.findHabitById(id).map((p0) => p0.extractHabit()).watchSingle();
 
   Future<void> createHabit(
       {required String name,
       required IconAsset icon,
       required Goal goal}) async {
-    _habitDao.createHabit(name: name, icon: icon, goal: goal);
-    _dataEventBus.emit(HabitCreatedEvent());
+    db.into(db.habits).insert(HabitRecord(
+        id: 0,
+        name: name,
+        icon: icon.name,
+        trackerName: serializeTrackerName(goal.progress),
+        targetProgress: serializeTargetProgress(goal.progress),
+        deadlineName: serializeDeadline(goal.deadline)));
+  }
+}
+
+extension Serialization on HabitCompound {
+  Habit extractHabit() => Habit(
+      name: name,
+      icon: IconAsset.ofDefaultPath(icon),
+      id: id,
+      goal: extractGoal());
+
+  Progress extractProgress() {
+    switch (trackerName) {
+      case 'counter':
+        return CounterProgress(currentProgress, targetProgress);
+      case 'timer':
+        return TimerProgress(currentProgress, targetProgress);
+      default:
+        throw StateError("Unexpected tracker name [$trackerName]");
+    }
   }
 
-  bool eventAffectsHabitList(DataEvent event) =>
-      event is HabitCreatedEvent || event is HabitChangedEvent;
+  Goal extractGoal() => Goal(
+      deadline: deserializeDeadline(deadlineName), progress: extractProgress());
+}
+
+Deadline deserializeDeadline(String name) {
+  switch (name) {
+    case 'endOfDay':
+      return Deadline.endOfDay;
+    case 'endOfWeek':
+      return Deadline.endOfWeek;
+    case 'endOfMonth':
+      return Deadline.endOfMonth;
+    default:
+      throw ArgumentError(
+          "No matching Deadline value for name [$name]", "name");
+  }
+}
+
+String serializeDeadline(Deadline deadline) {
+  switch (deadline) {
+    case Deadline.endOfDay:
+      return 'endOfDay';
+    case Deadline.endOfWeek:
+      return 'endOfWeek';
+    case Deadline.endOfMonth:
+      return 'endOfMonth';
+    default:
+      throw ArgumentError("Unknown deadline [$deadline]", "deadline");
+  }
+}
+
+String serializeTrackerName(Progress progress) {
+  if (progress is CounterProgress) {
+    return 'counter';
+  } else if (progress is TimerProgress) {
+    return 'timer';
+  } else {
+    throw ArgumentError("Unknown type of progress [$progress]", "progress");
+  }
+}
+
+int serializeTargetProgress(Progress progress) {
+  if (progress is CounterProgress) {
+    return progress.targetCount;
+  } else if (progress is TimerProgress) {
+    return progress.targetMilliseconds;
+  } else {
+    throw ArgumentError("Unknown type of progress [$progress]", "progress");
+  }
 }

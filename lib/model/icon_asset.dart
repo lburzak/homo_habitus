@@ -8,6 +8,8 @@ class IconAsset {
 
   IconAsset({required this.name, required this.path});
 
+  IconAsset.ofDefaultPath(this.name) : path = _makeDefaultIconPath(name);
+
   SvgPicture asSvgPicture(BuildContext context) => SvgPicture.asset(
         path,
         color: Theme.of(context).iconTheme.color,
@@ -18,6 +20,8 @@ class IconAsset {
     return 'IconAsset{name: $name, path: $path}';
   }
 
-  static IconAsset placeholder() =>
-      IconAsset(name: "language", path: "assets/icons/language.svg");
+  static IconAsset placeholder() => IconAsset.ofDefaultPath('language');
+
+  static String _makeDefaultIconPath(String iconName) =>
+      "assets/icons/$iconName.svg";
 }

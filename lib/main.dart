@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/data/app_database.dart';
+import 'package:homo_habitus/data/database.dart';
 import 'package:homo_habitus/data/habit_dao.dart';
 import 'package:homo_habitus/page/create_habit_page.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
@@ -36,9 +37,8 @@ class MyApp extends StatelessWidget {
                 child: MultiRepositoryProvider(
                   providers: [
                     RepositoryProvider(
-                        create: (context) => HabitRepository(
-                            context.read<HabitDao>(),
-                            context.read<DataEventBus>())),
+                        create: (context) =>
+                            HabitRepository(context.read<AppDatabase>())),
                     RepositoryProvider(
                         create: (context) => ProgressRepository(
                             context.read<Database>(),
