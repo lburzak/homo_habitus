@@ -31,13 +31,9 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
     HabitCreatorEvent event,
   ) async* {
     if (event is HabitCreatorNameChanged) {
-      yield state.copyWith(
-        name: event.name
-      );
+      yield state.copyWith(name: event.name);
     } else if (event is HabitCreatorCounterChanged) {
-      yield state.copyWith(
-        targetCount: _normalizeCounterValue(event.value)
-      );
+      yield state.copyWith(targetCount: event.value);
     } else if (event is HabitCreatorTimerHoursChanged) {
       yield state.copyWith(targetHours: event.hours);
     } else if (event is HabitCreatorTimerMinutesChanged) {
@@ -63,16 +59,6 @@ class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {
         return CounterProgress.initial(state.targetProgress);
       case GoalType.timer:
         return TimerProgress.initial(state.targetProgress);
-    }
-  }
-
-  int _normalizeCounterValue(int value) {
-    if (value < 0) {
-      return 0;
-    } else if (value > 99) {
-      return 99;
-    } else {
-      return value;
     }
   }
 }
