@@ -1,0 +1,100 @@
+create table trackers (
+    name text primary key
+) as TrackerRecord;
+
+create table deadlines (
+	name text primary key
+) as DeadlineRecord;
+
+create table habits (
+    id integer not null primary key autoincrement,
+    name text not null,
+    icon text not null,
+    tracker_name text not null references trackers(name),
+    target_progress integer not null,
+    deadline_name text not null references deadlines(name)
+) as HabitRecord;
+
+create table progress_events (
+    id integer not null primary key autoincrement,
+    habit_id integer not null references habits(id),
+    value integer not null,
+    timestamp integer not null default (strftime('%s', 'now'))
+);
+
+populateTrackers:
+insert into trackers values ('counter'), ('timer');
+
+populateDeadlines:
+insert into deadlines values ('endOfDay'), ('endOfWeek'), ('endOfMonth');
+
+findHabitsByDeadline as HabitCompound:
+select habits.*, ifnull(current_progress_value, 0) as current_progress
+from habits
+left join (
+	select habit_id, sum(progress_events.value) as current_progress_value
+	from progress_events
+	inner join habits
+	on progress_events.habit_id = habits.id
+	where progress_events.timestamp >= (
+		case habits.deadline_name
+		  when 'endOfDay' then
+		  strftime('%s', '2021-09-14 19:00:00', 'start of day')
+		  when 'endOfWeek' then
+		  strftime('%s', '2021-09-14 19:00:00', 'weekday 1', '-7 days', 'start of day')
+		  else
+		  strftime('%s', '2021-09-14 19:00:00', 'start of month')
+		end
+	)
+	group by habit_id
+) as current_progress_events
+on current_progress_events.habit_id = habits.id
+where habits.deadline_name = :deadline;
+
+findCompletionRateByDeadline:
+select ifnull(
+    cast(sum(ifnull(current_progress_value, 0)) as real) / sum(habits.target_progress), 0
+) as completion_rate
+from habits
+left join (
+	select habit_id, sum(progress_events.value) as current_progress_value
+	from progress_events
+	inner join habits
+	on progress_events.habit_id = habits.id
+	where progress_events.timestamp >= (
+		case habits.deadline_name
+		  when 'endOfDay' then
+		  strftime('%s', '2021-09-14 19:00:00', 'start of day')
+		  when 'endOfWeek' then
+		  strftime('%s', '2021-09-14 19:00:00', 'weekday 1', '-7 days', 'start of day')
+		  else
+		  strftime('%s', '2021-09-14 19:00:00', 'start of month')
+		end
+	)
+	group by habit_id
+) as current_progress_events
+on current_progress_events.habit_id = habits.id
+where habits.deadline_name = :deadline;
+
+findHabitById as HabitCompound:
+select habits.*, ifnull(current_progress_value, 0) as current_progress
+from habits
+left join (
+	select habit_id, sum(progress_events.value) as current_progress_value
+	from progress_events
+	inner join habits
+	on progress_events.habit_id = habits.id
+	where progress_events.timestamp >= (
+		case habits.deadline_name
+		  when 'endOfDay' then
+		  strftime('%s', '2021-09-14 19:00:00', 'start of day')
+		  when 'endOfWeek' then
+		  strftime('%s', '2021-09-14 19:00:00', 'weekday 1', '-7 days', 'start of day')
+		  else
+		  strftime('%s', '2021-09-14 19:00:00', 'start of month')
+		end
+	)
+	group by habit_id
+) as current_progress_events
+on current_progress_events.habit_id = habits.id
+where habits.id = :habitId;
