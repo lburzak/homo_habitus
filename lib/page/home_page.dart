@@ -44,12 +44,23 @@ class HabitGrid extends StatelessWidget {
     return BlocBuilder<HabitListCubit, Map<Deadline, HabitsSummary>>(
       builder: (context, state) {
         return SectionedGrid(
-          sections:
-              state.entries.map((e) => e.value.toSection("label")).toList(),
+          sections: state.entries
+              .map((summary) =>
+                  summary.value.toSection(_getDeadlineLabel(summary.key)))
+              .toList(),
         );
       },
     );
   }
+
+  String _getDeadlineLabel(Deadline deadline) =>
+      _deadlineLabels[deadline] ?? "UNKNOWN";
+
+  static const _deadlineLabels = {
+    Deadline.endOfDay: "Today",
+    Deadline.endOfWeek: "This week",
+    Deadline.endOfMonth: "This month"
+  };
 }
 
 extension SectionConverter on HabitsSummary {
