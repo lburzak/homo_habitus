@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/data/database.dart';
-import 'package:homo_habitus/page/create_habit_page.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/repository/progress_repository.dart';
-import 'package:homo_habitus/theme.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
+import 'package:homo_habitus/domain/repository/progress_repository.dart';
+import 'package:homo_habitus/ui/theme.dart';
+import 'package:homo_habitus/ui/page/create_habit_page.dart';
+import 'package:homo_habitus/ui/page/habit_page.dart';
+import 'package:homo_habitus/ui/page/home_page.dart';
 import 'package:provider/provider.dart';
-
-import 'page/habit_page.dart';
-import 'page/home_page.dart';
 
 void main() {
   runApp(const MyApp());

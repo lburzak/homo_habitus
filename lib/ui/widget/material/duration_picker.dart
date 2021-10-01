@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homo_habitus/widget/wheel_picker.dart';
+import 'package:homo_habitus/ui/widget/material/wheel_picker.dart';
 
 class DurationPicker extends StatelessWidget {
   final DurationPickerController _durationPickerController;

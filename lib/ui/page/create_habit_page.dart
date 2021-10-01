@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:homo_habitus/bloc/habit_creator_bloc.dart';
-import 'package:homo_habitus/model/deadline.dart';
-import 'package:homo_habitus/page/select_icon_dialog.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/widget/duration_picker.dart';
-import 'package:homo_habitus/widget/form_section.dart';
-import 'package:homo_habitus/widget/number_picker.dart';
-import 'package:homo_habitus/widget/option_selector.dart';
+import 'package:homo_habitus/state/habit_creator/habit_creator_bloc.dart';
+import 'package:homo_habitus/domain/model/deadline.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
+import 'package:homo_habitus/ui/page/select_icon_dialog.dart';
+import 'package:homo_habitus/ui/widget/material/duration_picker.dart';
+import 'package:homo_habitus/ui/widget/material/form_section.dart';
+import 'package:homo_habitus/ui/widget/material/number_picker.dart';
+import 'package:homo_habitus/ui/widget/material/option_selector.dart';
 import 'package:provider/provider.dart';
 
 class CreateHabitPage extends StatelessWidget {

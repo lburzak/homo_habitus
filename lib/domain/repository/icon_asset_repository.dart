@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:homo_habitus/model/icon_asset.dart';
+import 'package:homo_habitus/domain/model/icon_asset.dart';
 
 class IconAssetRepository {
   static const String _assetManifest = "AssetManifest.json";

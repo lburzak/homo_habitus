@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:homo_habitus/bloc/habit_list_cubit.dart';
-import 'package:homo_habitus/model/deadline.dart';
-import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/widget/habit_indicator.dart';
-import 'package:homo_habitus/widget/sectioned_grid.dart';
+import 'package:homo_habitus/state/habit_list/habit_list_cubit.dart';
+import 'package:homo_habitus/domain/model/deadline.dart';
+import 'package:homo_habitus/domain/model/habit.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
+import 'package:homo_habitus/ui/widget/habit_indicator.dart';
+import 'package:homo_habitus/ui/widget/material/sectioned_grid.dart';
 
 import 'habit_page.dart';
 

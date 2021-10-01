@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:homo_habitus/model/deadline.dart';
-import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
+import 'package:homo_habitus/domain/model/deadline.dart';
+import 'package:homo_habitus/domain/model/habit.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
 
 part 'habit_list_state.dart';
 

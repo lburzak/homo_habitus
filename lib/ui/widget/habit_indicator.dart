@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/widget/round_indicator.dart';
+import 'package:homo_habitus/domain/model/habit.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
+import 'package:homo_habitus/ui/widget/material/round_indicator.dart';
 import 'package:provider/provider.dart';
 
 class HabitIndicator extends StatelessWidget {

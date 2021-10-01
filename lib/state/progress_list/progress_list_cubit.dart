@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:homo_habitus/model/progress.dart';
+import 'package:homo_habitus/domain/model/progress.dart';
 
 part 'progress_list_state.dart';
 

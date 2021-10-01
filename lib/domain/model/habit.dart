@@ -1,5 +1,5 @@
-import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/icon_asset.dart';
+import 'package:homo_habitus/domain/model/goal.dart';
+import 'package:homo_habitus/domain/model/icon_asset.dart';
 
 class Habit {
   int id;

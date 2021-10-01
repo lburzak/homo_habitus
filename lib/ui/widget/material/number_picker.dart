@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:homo_habitus/widget/round_button.dart';
+import 'package:homo_habitus/ui/widget/material/round_button.dart';
 
 class NumberPicker extends StatefulWidget {
   NumberPicker(

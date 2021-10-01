@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:homo_habitus/bloc/habit_preview_bloc.dart';
-import 'package:homo_habitus/bloc/progress_calendar_cubit.dart';
-import 'package:homo_habitus/bloc/progress_list_cubit.dart';
-import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/model/progress.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/repository/progress_repository.dart';
-import 'package:homo_habitus/widget/habit_indicator.dart';
-import 'package:homo_habitus/widget/round_button.dart';
+import 'package:homo_habitus/state/habit_preview/habit_preview_bloc.dart';
+import 'package:homo_habitus/state/progress_calendar/progress_calendar_cubit.dart';
+import 'package:homo_habitus/state/progress_list/progress_list_cubit.dart';
+import 'package:homo_habitus/domain/model/habit.dart';
+import 'package:homo_habitus/domain/model/progress.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
+import 'package:homo_habitus/domain/repository/progress_repository.dart';
+import 'package:homo_habitus/ui/widget/habit_indicator.dart';
+import 'package:homo_habitus/ui/widget/material/round_button.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class HabitPageArguments {

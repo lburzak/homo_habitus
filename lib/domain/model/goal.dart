@@ -1,5 +1,5 @@
-import 'package:homo_habitus/model/deadline.dart';
-import 'package:homo_habitus/model/progress.dart';
+import 'package:homo_habitus/domain/model/deadline.dart';
+import 'package:homo_habitus/domain/model/progress.dart';
 
 class Goal {
   final Deadline deadline;

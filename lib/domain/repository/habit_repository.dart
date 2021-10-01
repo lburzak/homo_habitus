@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:homo_habitus/data/database.dart';
-import 'package:homo_habitus/model/deadline.dart';
-import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/model/icon_asset.dart';
-import 'package:homo_habitus/model/progress.dart';
+import 'package:homo_habitus/domain/model/deadline.dart';
+import 'package:homo_habitus/domain/model/goal.dart';
+import 'package:homo_habitus/domain/model/habit.dart';
+import 'package:homo_habitus/domain/model/icon_asset.dart';
+import 'package:homo_habitus/domain/model/progress.dart';
 
 class HabitRepository {
   final AppDatabase db;

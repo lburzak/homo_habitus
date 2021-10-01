@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:homo_habitus/model/habit.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
-import 'package:homo_habitus/repository/progress_repository.dart';
+import 'package:homo_habitus/domain/model/habit.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
+import 'package:homo_habitus/domain/repository/progress_repository.dart';
 
 part 'habit_preview_event.dart';
+
 part 'habit_preview_state.dart';
 
 class HabitPreviewBloc extends Bloc<HabitPreviewEvent, HabitPreviewState> {

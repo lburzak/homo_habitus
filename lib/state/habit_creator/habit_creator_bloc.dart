@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:homo_habitus/model/deadline.dart';
-import 'package:homo_habitus/model/goal.dart';
-import 'package:homo_habitus/model/icon_asset.dart';
-import 'package:homo_habitus/model/progress.dart';
-import 'package:homo_habitus/repository/habit_repository.dart';
+import 'package:homo_habitus/domain/model/deadline.dart';
+import 'package:homo_habitus/domain/model/goal.dart';
+import 'package:homo_habitus/domain/model/icon_asset.dart';
+import 'package:homo_habitus/domain/model/progress.dart';
+import 'package:homo_habitus/domain/repository/habit_repository.dart';
 
 part 'habit_creator_event.dart';
+
 part 'habit_creator_state.dart';
 
 class HabitCreatorBloc extends Bloc<HabitCreatorEvent, HabitCreatorState> {

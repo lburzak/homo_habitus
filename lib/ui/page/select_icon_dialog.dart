@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:homo_habitus/model/icon_asset.dart';
-import 'package:homo_habitus/repository/icon_asset_repository.dart';
-import 'package:homo_habitus/widget/frame_tile.dart';
+import 'package:homo_habitus/domain/model/icon_asset.dart';
+import 'package:homo_habitus/domain/repository/icon_asset_repository.dart';
+import 'package:homo_habitus/ui/widget/material/frame_tile.dart';
 import 'package:provider/provider.dart';
 
 class SelectIconDialog extends StatelessWidget {
