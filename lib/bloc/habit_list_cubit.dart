@@ -1,26 +1,47 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:homo_habitus/model/deadline.dart';
 import 'package:homo_habitus/model/habit.dart';
-import 'package:meta/meta.dart';
+import 'package:homo_habitus/repository/habit_repository.dart';
 
 part 'habit_list_state.dart';
 
-class HabitListCubit extends Cubit<HabitListState> {
-  HabitListCubit()
-      : super(HabitListState(
-          daySummary: TimeframeSummary(completionRate: 0.1, habits: [
-            Habit.placeholder()]),
-          weekSummary: const TimeframeSummary(completionRate: 0.1, habits: []),
-          monthSummary: const TimeframeSummary(completionRate: 0.1, habits: []),
-        ));
+class HabitListCubit extends Cubit<Map<Deadline, HabitsSummary>> {
+  final HabitRepository _habitRepository;
+
+  HabitListCubit(this._habitRepository)
+      : super({
+          Deadline.endOfDay: const HabitsSummary.empty(),
+          Deadline.endOfWeek: const HabitsSummary.empty(),
+          Deadline.endOfMonth: const HabitsSummary.empty(),
+        }) {
+    _subscribeToData();
+  }
+
+  void _subscribeToData() {
+    for (final deadline in Deadline.values) {
+      _habitRepository.watchCompletionPercentageByDeadline(deadline).listen(
+          (completionRate) =>
+              _onCompletionRateChanged(deadline, completionRate));
+
+      _habitRepository
+          .watchHabitsByDeadline(deadline)
+          .listen((habits) => _onHabitsChanged(deadline, habits));
+    }
+  }
+
+  void _onHabitsChanged(Deadline deadline, List<Habit> habits) {
+    emit(
+        state.updated(deadline, (summary) => summary.copyWith(habits: habits)));
+  }
+
+  void _onCompletionRateChanged(Deadline deadline, double completionRate) {
+    emit(state.updated(deadline,
+        (summary) => summary.copyWith(completionRate: completionRate)));
+  }
 }
 
-class TimeframeSummary extends Equatable {
-  final double completionRate;
-  final List<Habit> habits;
-
-  const TimeframeSummary({required this.completionRate, required this.habits});
-
-  @override
-  List<Object> get props => [completionRate, habits];
+extension Copy<K, V> on Map<K, V> {
+  Map<K, V> updated(K key, V Function(V value) update) =>
+      Map<K, V>.from(this)..update(key, update);
 }

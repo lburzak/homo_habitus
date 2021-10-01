@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/data/app_database.dart';
 import 'package:homo_habitus/data/database.dart';
-import 'package:homo_habitus/data/habit_dao.dart';
 import 'package:homo_habitus/page/create_habit_page.dart';
 import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/repository/progress_repository.dart';
@@ -26,13 +25,11 @@ class MyApp extends StatelessWidget {
     return FutureBuilder<Database>(
       future: openAppDatabase(),
       builder: (context, snapshot) => snapshot.hasData
-          ? Provider<Database>.value(
-              value: snapshot.data!,
+          ? Provider<AppDatabase>(
+              create: (context) => AppDatabase(),
               child: MultiProvider(
                 providers: [
                   Provider(create: (context) => DataEventBus()),
-                  Provider(
-                      create: (context) => HabitDao(context.read<Database>()))
                 ],
                 child: MultiRepositoryProvider(
                   providers: [

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:homo_habitus/bloc/habit_list_cubit.dart';
+import 'package:homo_habitus/model/deadline.dart';
 import 'package:homo_habitus/model/habit.dart';
+import 'package:homo_habitus/repository/habit_repository.dart';
 import 'package:homo_habitus/widget/habit_indicator.dart';
 import 'package:homo_habitus/widget/sectioned_grid.dart';
 
@@ -20,7 +22,9 @@ class HomePage extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         child: BlocProvider(
-            create: (context) => HabitListCubit(), child: const HabitGrid()),
+            create: (context) =>
+                HabitListCubit(context.read<HabitRepository>()),
+            child: const HabitGrid()),
       ),
     );
   }
@@ -37,21 +41,18 @@ class HabitGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HabitListCubit, HabitListState>(
+    return BlocBuilder<HabitListCubit, Map<Deadline, HabitsSummary>>(
       builder: (context, state) {
         return SectionedGrid(
-          sections: [
-            state.daySummary.toSection("Today"),
-            state.weekSummary.toSection("This week"),
-            state.monthSummary.toSection("This month")
-          ],
+          sections:
+              state.entries.map((e) => e.value.toSection("label")).toList(),
         );
       },
     );
   }
 }
 
-extension SectionConverter on TimeframeSummary {
+extension SectionConverter on HabitsSummary {
   Section toSection(String label) => Section(
       headerBuilder: (context) =>
           TimeframeSectionHeader(label, completionPercentage: completionRate),

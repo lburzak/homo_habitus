@@ -1,16 +1,34 @@
 part of 'habit_list_cubit.dart';
 
-@immutable
 class HabitListState extends Equatable {
-  final TimeframeSummary daySummary;
-  final TimeframeSummary weekSummary;
-  final TimeframeSummary monthSummary;
+  final Map<Deadline, HabitsSummary> summaries;
 
-  const HabitListState(
-      {required this.daySummary,
-      required this.weekSummary,
-      required this.monthSummary});
+  const HabitListState(this.summaries);
 
   @override
-  List<Object> get props => [daySummary, weekSummary, monthSummary];
+  List<Object?> get props => [summaries];
+}
+
+class HabitsSummary extends Equatable {
+  final double completionRate;
+  final List<Habit> habits;
+
+  const HabitsSummary({required this.completionRate, required this.habits});
+
+  const HabitsSummary.empty()
+      : completionRate = 0,
+        habits = const [];
+
+  @override
+  List<Object> get props => [completionRate, habits];
+
+  HabitsSummary copyWith({
+    double? completionRate,
+    List<Habit>? habits,
+  }) {
+    return HabitsSummary(
+      completionRate: completionRate ?? this.completionRate,
+      habits: habits ?? this.habits,
+    );
+  }
 }

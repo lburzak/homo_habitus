@@ -52,8 +52,8 @@ on current_progress_events.habit_id = habits.id
 where habits.deadline_name = :deadline;
 
 findCompletionRateByDeadline:
-select (
-    cast(sum(ifnull(current_progress_value, 0)) as real) / sum(habits.target_progress)
+select ifnull(
+    cast(sum(ifnull(current_progress_value, 0)) as real) / sum(habits.target_progress), 0
 ) as completion_rate
 from habits
 left join (

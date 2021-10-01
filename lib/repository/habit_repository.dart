@@ -28,8 +28,7 @@ class HabitRepository {
       {required String name,
       required IconAsset icon,
       required Goal goal}) async {
-    db.into(db.habits).insert(HabitRecord(
-        id: 0,
+    db.into(db.habits).insert(HabitsCompanion.insert(
         name: name,
         icon: icon.name,
         trackerName: serializeTrackerName(goal.progress),
