@@ -38,8 +38,8 @@ class MyApp extends StatelessWidget {
                             HabitRepository(context.read<AppDatabase>())),
                     RepositoryProvider(
                         create: (context) => ProgressRepository(
-                            context.read<Database>(),
-                            context.read<DataEventBus>())),
+                              context.read<AppDatabase>(),
+                            )),
                   ],
                   child: MaterialApp(
                     debugShowCheckedModeBanner: false,
