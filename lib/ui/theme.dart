@@ -7,20 +7,23 @@ final themeData = ThemeData(
     floatingActionButtonTheme: _fabTheme,
     appBarTheme: _appBarTheme,
     textTheme: _textTheme,
+    backgroundColor: _colorScheme.background,
+    scaffoldBackgroundColor: _colorScheme.background,
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)))));
 
 const _colorScheme = ColorScheme.dark(
-    onBackground: Color(0xff393939),
+    background: Color(0xff131313),
+    onBackground: Color(0xff1a1a1a),
     onPrimary: Colors.white,
     primary: Color(0xff306F1A),
     primaryVariant: Color(0xff275119),
     secondary: Color(0xff47aca4));
 
-const _fabTheme =
-    FloatingActionButtonThemeData(backgroundColor: Color(0xff393939));
+final _fabTheme =
+    FloatingActionButtonThemeData(backgroundColor: _colorScheme.onBackground);
 
 final _textTheme = TextTheme(
   headline4: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 36),
@@ -37,4 +40,4 @@ final _appBarTheme = AppBarTheme(
     centerTitle: true,
     elevation: 0,
     titleTextStyle: _textTheme.headline6,
-    backgroundColor: const Color(0xff303030));
+    backgroundColor: _colorScheme.background);
